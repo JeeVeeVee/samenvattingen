@@ -1,0 +1,37 @@
+\contentsline {chapter}{\numberline {1}SQL : Review}{3}
+\contentsline {section}{\numberline {1.1}overview}{3}
+\contentsline {section}{\numberline {1.2}SELECT}{3}
+\contentsline {subsection}{\numberline {1.2.1}DML - consulting data}{3}
+\contentsline {subsection}{\numberline {1.2.2}basic form of SELECT statement}{4}
+\contentsline {section}{\numberline {1.3}use of functions}{4}
+\contentsline {section}{\numberline {1.4}the case function}{5}
+\contentsline {section}{\numberline {1.5}basic concepts revisited}{6}
+\contentsline {subsection}{\numberline {1.5.1}GROUP BY and statistical functions}{6}
+\contentsline {subsection}{\numberline {1.5.2}Working with more then 1 table : JOIN}{6}
+\contentsline {section}{\numberline {1.6}set operators : UNION - INTERSECT - EXCEPT}{7}
+\contentsline {chapter}{\numberline {2}SQL : advanced}{8}
+\contentsline {section}{\numberline {2.1}subqueries}{8}
+\contentsline {subsection}{\numberline {2.1.1}correlated subqueries}{8}
+\contentsline {subsection}{\numberline {2.1.2}subqueries and the EXISTS operator}{8}
+\contentsline {section}{\numberline {2.2}DML basic tasks}{9}
+\contentsline {subsection}{\numberline {2.2.1}Adding data - INSERT}{9}
+\contentsline {subsection}{\numberline {2.2.2}modifing data - UPDATE}{10}
+\contentsline {subsection}{\numberline {2.2.3}remove rows - DELETE}{10}
+\contentsline {section}{\numberline {2.3}views}{10}
+\contentsline {subsection}{\numberline {2.3.1}definition of a view}{11}
+\contentsline {section}{\numberline {2.4}common table expressions}{11}
+\contentsline {subsection}{\numberline {2.4.1}the WITH component}{11}
+\contentsline {subsection}{\numberline {2.4.2}recursive CTE's}{12}
+\contentsline {chapter}{\numberline {3}SQL : Data Definition Language}{13}
+\contentsline {section}{\numberline {3.1}DDL - Database}{14}
+\contentsline {section}{\numberline {3.2}DDL - Tables}{14}
+\contentsline {subsection}{\numberline {3.2.1}creating tables}{14}
+\contentsline {subsection}{\numberline {3.2.2}changing tables}{15}
+\contentsline {subsection}{\numberline {3.2.3}removing tables}{15}
+\contentsline {section}{\numberline {3.3}Scripts}{15}
+\contentsline {section}{\numberline {3.4}SQL Datatypes}{15}
+\contentsline {section}{\numberline {3.5}constraints}{16}
+\contentsline {subsection}{\numberline {3.5.1}identity values}{16}
+\contentsline {chapter}{\numberline {4}window functions}{18}
+\contentsline {section}{\numberline {4.1}moving aggregate}{19}
+\contentsline {section}{\numberline {4.2}LAG and LEAD}{19}
