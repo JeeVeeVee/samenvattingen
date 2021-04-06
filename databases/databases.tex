@@ -130,8 +130,21 @@
 		\item AVG
 		\item MIN 
 		\item MAX
-		\item COUNT	
+		\item COUNT
+		\item TOP
 	\end{itemize}
+
+   \begin{lstlisting}[language=SQL]
+		-- Select the top 5 of the cheapest products (important)
+		SELECT TOP 5 productid, price
+		FROM product
+		ORDER BY price;
+
+		-- 5 most expensive products: ORDER BY price DESC
+		SELECT TOP 5 productid, price
+		FROM product
+		ORDER BY price DESC;
+   \end{lstlisting}
 	
 	\textbf{Grouping with GROUP BY}
 	
@@ -180,7 +193,7 @@ ON Teams.playerno = Player.playerno\end{lstlisting}
 	\textbf{INTERSECT} returns all the records that are in both of the query-results
 	\textbf{EXCEPT} returns all records that are only in the first query-result
 	
-	\chapter{SQL : advanced}
+	\chapter{SQL : Advanced}
 	\section{subqueries}
 	A subquery can return a single value, or a single column, or more columns.
 	ANY and ALL are 2 keywords for comparing a subquery which returns a column.
@@ -467,7 +480,7 @@ create table  student(
 			\item SET DEFAULT : referring values are set to their defaults.
 		\end{itemize}
 	\end{itemize}	
-	\chapter{window functions}
+	\chapter{Window Functions}
 	Example: you want to compare the sales numbers from last year to those of this year, window functions offer a solution to these kind of problems in a single, efficient SQL query. They use the OVER clause to do so. The results of a SELECT are partitioned, there is numberng, ordering and aggregate functions per partition. The partition behaves as a window that shifts over the data, hence the name window function. \\
 	Instead of solving the problem with a inefficient subquery: 
 	\begin{lstlisting}[language = sql]
