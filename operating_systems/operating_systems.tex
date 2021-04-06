@@ -2,6 +2,7 @@
 \usepackage{graphicx}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{array}
 \usepackage[a4paper, total={6in, 10in}]{geometry}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -90,6 +91,82 @@
    			\subsection{Concurrency}
    				Processen zijn vaak niet onafhankelijk, ze zijn dan concurrent. Dit wil zeggen dat 2 processen soms ook dezelfde resources aanspreken, dit zorgt voor conflicten. Het OS moet de volgorde van de processen zodanig regelen, dat die conflicten worden vermeden, dit noemt \textbf{syncronisatie}.
    	\chapter{Virtualisatie \& Cloud}
+   		\section{Wat is virtialisatie?}
+   			Virtualisatie verwijst naar het creëren van een virtuele versie van iets, zoals virtuele computer hardware, opslagapparaten, netwerkbronnenn,... Traditioneel gebruiken we 1 OS op een computer, dat OS spreekt de hardware aan, en de applicaties draaien er bovenop. Door middel van virtualisatie kan men op 1 computer meerdere (virtuele) computers laten draaien. Die virtuele computers delen van fysieke hardware.
+   			\\
+   			De voordelen van virtualisatie is dat het efficiënter gebruik maakt van de beschikbare ruimte, het is goedkoper en de ecologische voetafdruk verkleint eveneens. 
+   			\\
+   			Virtualisatie bestaat in veel vormen en maten. 1 van de bekendste spelers op de markt is VMware, maar ook grote bedrijven als Microsoft en Oracle mengen zich. Docker is een vrij nieuwe en speciale vorm van virtualisatie, er worden geen virtuele machines gebruikt, maar er wordt een linux kernel gebruikt door meerdere containers.
+   		\section{Concepten van virtualisatie}
+   			\subsection{Virtuele Machine}
+   				Een virtuele machine (VM) is een computerprogramme dat een volledige pc nabootst, en waar andere programma's op kunnen worden uitgevoerd. Een VM bezit vRAM, vCPU en een virtual disk.
+   			\subsection{Soorten VM's}
+   				\begin{itemize}
+   					\item Programmeertaal-specifiek : JVM
+   					\item Emulator : VirtualBox, VMWare
+   					\item Applicatie-Specifiek : Docker
+   				\end{itemize}
+   			\subsection{Hypervisor}
+   				Een hypervisor is de software die gebruikt wordt om VM's aan te maken en op te starten, deze worden soms ook Virtual Machine Monitor genoemd (VMM). Deze regelt de virtualisatie, en door er van gebruik te maken, kan 1 host pc meerder VM's tegelijkertijd laten draaien. 
+   				\begin{itemize}
+   					\item Type 1
+   						\subitem native hypervisor
+   						\subitem er is geen onderliggend OS
+   						\subitem kan de hardware rechtstreeks aanspreken
+   						\subitem geen overhead door OS
+   						\subitem efficient maar ook complex
+   						\subitem handig voor servers
+   					\item Type 2
+   						\subitem programma bovenop OS (VMWare)
+   						\subitem het aanspreken van hardware gebeurt via functies van het onderliggend OS
+   						\subitem eenvoudig 
+   						\subitem vooral gebruikt op persoonlijke toestellen 
+   						\subitem niet zo krachtig
+   				\end{itemize}
+   		\section{Multi-tenacy}
+   			Multi-tenacy is een concept dat veel ouder is dan computers, het stamt uit de immo markt. Een single tenacy is als er maar 1 huurder in een gebouw woont, zoals in een alleenstaande woning. Een appartement is multi-tenacy omdat het meerdere gezinnen kan huisvesten. De link met IT is dat een persoonlijke computer alleen door jou wordt gebruik, terwijl een fysieke server in een datacenter gedeeld wordt met veel klanten. 
+   			\\ kenmerken : 
+   			\begin{itemize}
+   				\item bronnen worden gedeeld
+   				\item een huurder is een gebruiker of een groep van gebruikers met gemeenschappelijke toegang 
+   				\item er zijn verschillende vormen, zowel op niveau van hard als software
+   				\item virtualisatie speelt een belangerijke rol
+   				\item multitenacy is belangerijk kenmerk van Cloud Computing
+   			\end{itemize}
+	   		\begin{center}
+	   			\begin{tabular}{| m{20em} | m{20em} | }
+	   				\hline
+	   				\textbf{voordelen} & \textbf{nadelen} \\
+	   				\hline
+	   				
+					Efficienter gebruik van de beschikbare bronnen, er kunnen immers meerdere eindgebruikers door 1 toestel worden bediend
+	   				 & Minder isolatie en verhoogde beveiligingsrisico's : 1 inbreuk op 1 instantie kan andere tenants treffen \\ 
+	   				\hline
+	   				lagere operationele kosten, en dus goedkoper voor de eindgebruiker & minder prestatie-isolatie, grote tenants kunnen de presatie van kleinere tenants negatief beïnvloeden \\  
+	   				\hline
+	   			\end{tabular}
+	   		\end{center}
+   		\section{Cloud Computing}
+   			Bij Cloud computing worden computerbronnen, zoals hardware, software en gegevens, op aanvraag beschikbaar gesteld via een netwerk (meestal internet). De term is afkomstig uit de schematechnieken uit de informatica.
+   			\\
+   			kenmerken : 
+   			\begin{itemize}
+   				\item bronnen beschikbaar op aanvraag, vaak zonder tussenkomst van een fysieke persoon
+   				\item vaak via een pay-as-you-go pricing model 
+   				\item elasticiteit : mogelijk om automatisch aan te passen in functie van de vraag. 
+   			\end{itemize}
+   			\subsection{Cloud}
+   				De cloud is een wolk van computers, een virtualisatie van de serveromgeving. De eindgebruiker weet niet waar de instanties precies draaien, en weet ook niet op hoeveel servers. Daardoor is de eindgebruiker geen eigenaar van hard/software, en is hij niet verantwoordelijk voor onderhoud. De cloud is een virtuele en schaalbare infrastructuur. 
+   			\subsection{Deployment modellen}
+   				\begin{itemize}
+   					\item \textbf{Publieke} Cloud omgeving : beschikbaar voor iedereen, via het internet
+   					\item \textbf{Private} Cloud omgeving : beperkte toegang tot 1 of meerdere organisaties, kan zelf in privaat of publiek datacenter.
+   					\item \textbf{Hybride} Cloud omgeving : combinatie van meerdere modellen.
+   				\end{itemize}
+   		
+   				
+   				
+   			
    		
   	 				
   	 		

@@ -1,0 +1,594 @@
+\documentclass{report}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+git
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
+\graphicspath{ {images/} }
+\title{Databases II, Hogent}
+\author{JeeVeeVee}
+\date{2020/2021}
+\begin{document}
+   \maketitle
+   \tableofcontents
+   
+   \chapter{SQL : Review}
+   \section{overview}
+   
+   There are a lot of dialects and variants of SQL, this makes it very hard to establish some kind of general standard. Universal, there are 3 subvariants of SQL statements that we recognize: 
+  
+   \begin{itemize}
+   	\item \textbf{Data Definition Language} (DDL) 
+   	\item \textbf{Data Manipulation language} (DML)
+   	\item \textbf{Data Control Language} (DCL)
+   \end{itemize}
+
+	\section{SELECT}
+	\subsection{DML - consulting data}
+	\begin{itemize}
+		\item consulting 1 table
+		\begin{itemize}
+			\item basic form
+			\item SELECT clause
+			\item WHERE clause
+			\item row formatting
+			\item statistical functions
+			\item grouping
+		\end{itemize}
+		\item consulting \textgreater 1 table
+	\end{itemize}
+
+	\subsection{basic form of SELECT statement}
+	statement for consulting 1 table: 
+	\begin{lstlisting}[language=SQL]
+	SELECT [ALL | DISTINCT] {*|expression[, expression...]} FROM tablename[WHERE conditions(s)][GROUP BY column name [, column name ...][HAVING conditions(s)][ORDER BY {column name |seqnr}{ASC|DESC}[,...]\end{lstlisting}
+	\begin{itemize}
+		\item SELECT : specifies the columns to show in the output
+		\item DISTINCT : filters out duplicates 
+		\item FROM : specifies table name
+		\item WHERE : filter condition on indiviudual lines in the output
+		\item ORDER BY : sortin
+		\item GROUP BY : groupin
+		\item HAVING : filter condition for groups
+	\end{itemize}
+	
+	you can name the output columns by using an AS, example : 
+	\begin{lstlisting}[language=SQL]
+	SELECTproductid AS ProductNummer, productname AS 'Name Product'FROM product\end{lstlisting}
+	\section{use of functions}
+	\begin{itemize}
+		\item String
+		\begin{itemize}
+			\item left
+			\item right
+			\item len
+			\item rtrim
+			\item substring
+			\item replace
+		\end{itemize}
+		\item DateTime
+		\begin{itemize}
+			\item DateAdd
+			\item DateDiff
+			\item DatePart
+			\item Day
+			\item Month
+			\item Year
+			\item \textbf{GETDATE() returns the current DateTime}
+		\end{itemize}
+		\item Arithmietic
+		\begin{itemize}
+			\item round
+			\item floor
+			\item ceiling
+			\item cos
+			\item sin
+		\end{itemize}
+	\end{itemize}
+	you can cast variables to a certain type by using \\ CAST(\textless value expression\textgreater AS \textless data type\textgreater)
+	\section{the case function}
+	example : 
+	\begin{lstlisting}[language=SQL]
+	select case region 
+		when 'OR' then 'West' 
+		when 'MI' then 'North' 
+		else 'Elsewhere' 
+		end,
+		city,
+		region
+	from supplier;\end{lstlisting}
+	\pagebreak
+	\section{basic concepts revisited}
+	\subsection{GROUP BY and statistical functions}
+	%\textbf{Statistical functions}
+	\begin{itemize}
+		\item SUM
+		\item AVG
+		\item MIN 
+		\item MAX
+		\item COUNT
+		\item TOP
+	\end{itemize}
+
+   \begin{lstlisting}[language=SQL]
+		-- Select the top 5 of the cheapest products (important)
+		SELECT TOP 5 productid, price
+		FROM product
+		ORDER BY price;
+
+		-- 5 most expensive products: ORDER BY price DESC
+		SELECT TOP 5 productid, price
+		FROM product
+		ORDER BY price DESC;
+   \end{lstlisting}
+	
+	\textbf{Grouping with GROUP BY}
+	
+	\textbf{filter on groups using HAVING}
+	example : 
+	\begin{lstlisting}[language=SQL]
+SELECT
+	ProductTypeID,
+	count(productid)
+FROM Product
+GROUP BY ProductTypeID
+HAVING COUNT(PRODUCTID) > 10\end{lstlisting}
+	\subsection{Working with more then 1 table : JOIN}
+	\textbf{JOIN}
+	If you want to select from more then 1 table, you can use the join keyword, there are 3 variants: 
+	\begin{itemize}
+		\item INNER JOIN
+		\subitem joins a row from one table with another one based on common criteria in the corresponding tables
+		example: 
+		\begin{lstlisting}[language=SQL]
+SELECT TeamNo, Name
+FROM Teams JOIN Players
+ON Teams.playerno = Player.playerno\end{lstlisting}
+		\subitem You can also join more then 2 tables, and also join a table with itself
+		\item OUTER JOIN
+		\subitem returns all records from 1 table, even if there is no corresponding record in the other table
+		\subitem there are 3 types : 
+		\begin{itemize}
+			\item LEFT OUTER JOIN : returns all rows of the first table
+			\item RIGHT OUTER JOIN  : return all rows of the second table
+			\item FULL OUTER JOIN  : returns all of the first and the second table 
+		\end{itemize}
+		\item CROSS JOIN 
+		\subitem in a cross join the number of rows in equal to the number of rows in the first table multiplied by the number of rows in the second table
+		\subitem this is used to generate all possible combinations
+	\end{itemize}
+	\section{set operators : UNION - INTERSECT - EXCEPT}
+	with \textbf{UNION} you can combine the result of 2 queries, but the 2 results need to have the exact same SELECT's
+	example : 
+	\begin{lstlisting}[language=SQL]
+SELECT lastname + '' + firstname AS name, city, postalcode)
+FROM Employee
+UNION
+SELECT customername, city, postalcode
+FROM Customer\end{lstlisting}
+	\textbf{INTERSECT} returns all the records that are in both of the query-results
+	\textbf{EXCEPT} returns all records that are only in the first query-result
+	
+	\chapter{SQL : Advanced}
+	\section{subqueries}
+	A subquery can return a single value, or a single column, or more columns.
+	ANY and ALL are 2 keywords for comparing a subquery which returns a column.
+	\subsection{correlated subqueries}
+	In a correlated subquery, the inner query depends on info from the outer query. In this case, the subquery is executed for each row in the main query. This makes this method not very efficient. If possible, use joins or simple subqueries. 
+	Principle: 
+	\begin{lstlisting}[language=SQL]
+SELECT * 
+FROM table a
+WHERE expression operator (SELECT *
+						   FROM table 
+						   WHERE expression operator a.columnname)\end{lstlisting}
+	\subsection{subqueries and the EXISTS operator}
+	The EXISTS operator tests the existence of a result set, you can also youse NOT EXISTS. example that retursn all the players that haven't played a game yet: 
+	\begin{lstlisting}[language=SQL]
+SELECT * 
+FROM players as p
+WHERE NOT EXISTS(
+	SELECT * FROM matches WHERE playerno = p.playerno)\end{lstlisting}
+	Subqueries can also be used in the SELECT, and FROM clauses
+
+	\section{DML basic tasks}
+	\begin{itemize}
+		\item INSERT to add data
+		\item UPDATE to change data
+		\item DELETE to remove date
+		\item MERGE combination of the previous 3
+	\end{itemize}
+
+	\textbf{tip for not destroying a database}
+	when you are working with DML, and SQL has by default no UNDO, this is why we work with tranactions: 
+	\begin{lstlisting}[language=SQL]
+begin transaction -- start a new transaction
+--> saves previous state of the DB in buffer
+
+--several "destructive" commands can go here
+DELETE FROM Employee;
+INSERT INTO product
+	values (10001 'Drinking bottle', null, null, null, null, null, null);
+
+-- you can see the changes in this session
+SELECT * FROM Product WHERE ProductID = 10001;
+
+rollback;  --> ends transaction and restores database to state before begin transaction
+-- commit; --> if you want to make the changes permanent\end{lstlisting}
+	\subsection{Adding data - INSERT}
+	The insert staement adds data in a table. You can do this by only specifing the values that are NOTNULL : 
+	\begin{lstlisting}
+INSERT INTO product (productID, productName)
+VALUES (10000, 'Energy bar')\end{lstlisting}
+	Or if you are a sick fuck : 
+	\begin{lstlisting}[language=SQL]
+INSERT INTO product
+VALUES (10000, 'Energy bar', null, null, null, null, null, null)\end{lstlisting}
+	\subsection{modifing data - UPDATE}
+	To change all rows in a table: 
+	\begin{lstlisting}[language=SQL]
+UPDATE product
+SET price = (price "1.1)\end{lstlisting}
+To change 1 row, or a group of rows:  
+\begin{lstlisting}[language=SQL]
+UPDATE product
+SET price = (price "1.1)
+WHERE productName = 'Wheeler'\end{lstlisting}
+To change more then 1 value: 
+\begin{lstlisting}[language=SQL]
+UPDATE product
+SET price = (price "1.1), unitsInStock = 0\end{lstlisting}
+	\subsection{remove rows - DELETE}
+	deleting rows : 
+	\begin{lstlisting}[language=SQL]
+DELETE
+FROM product
+WHERE productName = 'Wheeler';\end{lstlisting}
+	deleting all rows in a table: 
+	\begin{lstlisting}[language=SQL]
+DELETE
+FROM product
+
+--> or use truncate
+
+TRUNCATE TABLE product		\end{lstlisting} 
+	You can also delete rows based on data in another table: 
+	\begin{lstlisting}[language=SQL]
+DELETE FROM ordersDetail
+WHERE orderid in 
+	(SELECT orderID 
+	 FROM orders
+	 WHERE orderdate = (SELECT MAX(orderdate) FROM Orders)
+	 );\end{lstlisting}
+	
+	\section{views}
+	Definition : A view is a SELECT statement, it can be seen as a virtual table composed out of other tables \& views. The advantages of views are that they hide complexity of the database, large and complex queries become accesible and reusable. They are also handy for export to other applications.
+	\subsection{definition of a view}
+	syntaxis: 
+	\begin{lstlisting}[language=sql]
+CREATE VIEW view_name [(column_list)]
+AS select_statement
+[with check option]\end{lstlisting}
+	If you use a lot of views, this may become some kind of a mess, since they are all stored within the database. Views are also updateable, use the keyword \textbf{ALTER}.
+	A view can also update a table, instead of a SELECT statement, a INSERT, UPDATE or DELETE clause is used then. The \textbf{CHECK} option is used to check if an update makes it so that a certain row is no longer part of the view. If the check option is enabled, there will be an error generated.
+	
+	\section{common table expressions}
+	\subsection{the WITH component}
+	The \textbf{WITH} component has 2 application areas: 
+	\begin{enumerate}
+		\item Simplify SQL-instructions, avoid repitition of SQL constructs
+		\item Traverse recursively hierachrical and network structs
+	\end{enumerate}
+	Using the \textbf{WITH} component, you can give the subquery its own name (with column names) and reuse it in the rest of the query (as much as needed).
+	\begin{lstlisting}[language=sql]
+WITH fines(number)
+	AS (SELECT count(pe.playerno)
+		  FROM players AS p1
+			 	LEFT JOIN penalties AS pe
+		  GROUP BY p1.playerno
+		)
+		
+SELECT AVG(number * 1.0)
+FROM fines;	\end{lstlisting}
+	We use CTE to abreviate Common Table Expression.
+	\\
+	CTE's look a lot like views, the difference is that a CTE only exists during the SELECT-statement and that the CTE is not visible for other users and applications. They also look a bit like Subqueries, since they are both virtual tables, difference here is that a CTE can be reused, a CTE is defined on top of the query, instead of within the clause where it is used. A simple subquery can always be replaced by a CTE.
+
+	\subsection{recursive CTE's}
+	recursive means that we continue to execute a CTE until a condition is reached.
+	This allows us to solve problems like : 
+	\begin{itemize}
+		\item Who are the friends of my friends?
+		\item What is the hierarchy of an organisation
+		\item find the parts and subparts of a product
+	\end{itemize}
+	example: next CTE gives you all numbers from 1 to 5
+	\begin{lstlisting}[language=sql]
+with numbers(number) as 
+	(SELECT 1
+	 UNION all
+	 	SELECT number + 1
+	 	FROM numbers
+	 	WHERE number < 5)\end{lstlisting}
+	 How does this work : 
+	 \begin{enumerate}
+	 	\item SQL searches table expressions that do not contain recursivity and executes them one by one
+	 	\item execute all recursive expressions. The numbers table, that got a value of 1 in step 1, is used . A new row is added to the numbers table (2)
+	 	\item the second expression is re-executed, giving (3) as a result?
+	 	\item since step 3 still gave us a result, the recursive expression is used again, giving (4) as a result. 
+	 	\item again.(5)
+	 	\item if the expression now is processed again, it does not return a result since the previous step no rows were added. SQL stops the processing of the table and the final result is known.
+	 \end{enumerate}
+ 	The max number or recursions is 100, but if you use the option maxrecursion N, you can change this to N. 
+ 	
+ 	\chapter{SQL : Data Definition Language}
+ 	DDL can be used for : 
+ 	\begin{itemize}
+ 		\item defining databases
+ 		\item defining tables
+ 		\item determining data types in SQL server
+ 		\item defining constraints - data integrity
+ 		\item defning indexes 
+ 		\item defining views (see previous chapter)
+ 	\end{itemize}
+
+ 	\section{DDL - Database}
+ 	The data from a database is stored within data files, these often have a .mdf or .ndf extenstion. A database also stores log files, these have a .ldf extension.
+ 	A database is created by a sysadmin, who has the correct permissions. It is done by making a copy of a "model" database. 
+ 	The command for creating a new database is: 
+ 	\begin{lstlisting}[language=sql]
+-- the simple version
+CREATE DATABASE database_name
+
+-- the version for wizards
+CREATE DATABASE database_name 
+[ON [<filespec> [ ,...n ]] [,<filegroup>[ ,...n ]]] 
+[LOG ON { < filespec> [ ,...n ] } ] [COLLATE collation_name] 
+[FOR LOAD | FOR ATTACH] 
+< filespec > :: = 
+[PRIMARY](
+[NAME =logical_file_name,] 
+	FILENAME = 'os_file_name' 
+	[,SIZE =size] 
+	[,MAXSIZE ={ max_size| UNLIMITED } ] 
+	[,FILEGROWTH =growth_increment]) [ ,...n] 
+< filegroup > :: = FILEGROUP filegroup_name < filespec > [ ,...n]\end{lstlisting}
+	Deleting a datbase is a lot easier: 
+	\begin{lstlisting}[language=sql]
+DROP DATABASE database_name	\end{lstlisting}
+	By using ALTER, you can change the characteristics of database
+	\section{DDL - Tables}
+	\subsection{creating tables}
+	When creating a new table, you have to specify, the name of the table, the definition of its columns and the definition of constraints. 
+	\begin{lstlisting}[language=sql]
+CREATE TABLE table_name (
+	{<column_defination> | 
+	 <computed_column_definition> |
+	 <column_set_definition}
+	[table_constraint] [, ...n] )\end{lstlisting}
+
+	\subsection{changing tables}
+	Adding, changing or removing columns. Using the ALTER keyword followed by MODIFY, ADD, DROP. 
+	\begin{lstlisting}[language=sql]
+-- adding the address column
+ALTER TABLE student
+	ADD address varchar(40) NULL
+
+--changing the address column
+ALTER TABLE student
+	MODIFY COLUMN address varchar(50) NULL
+
+--removing the address column
+ALTER TABLE student
+	REMOVE COLUMN address\end{lstlisting}
+	\subsection{removing tables}
+	Use the DROP keyword
+	\section{Scripts}
+	Scripts are used for batch processing and creating a test and production environment.
+	\section{SQL Datatypes}
+	There are a few categories:
+	\begin{enumerate}
+		\item exact numerics
+			\subitem bigint
+			\subitem int
+			\subitem smallint
+			\subitem tinyint
+			\subitem bit
+			\subitem decimal/numeric
+		\item approximate numerics
+			\subitem float
+			\subitem real
+
+		\item Date and time
+			\subitem datetime
+			\subitem smalldatetime
+			\subitem date
+			\subitem time
+		\item Charachter strings
+			\subitem char[(n)]
+			\subitem varchar([n | max])
+			\subitem nchar[(n)]
+			\subitem nvarchar[(n)]
+		\item Unicode charachter strings
+		\item Binary strings
+			\subitem binary[(n)]
+			\subitem varbinary[(n | max)]
+		\item other
+	\end{enumerate}	
+	\textbf{type conversion}\\
+	There is implicit (automatic) and explicit type conversion. for explicit, use CAST and CONVERT (chapter 1)
+	\section{constraints}
+	\subsection{identity values}
+	An identity column contains a unique value for each row, system generated sequential values. There is only 1 identity column allowed per table, this column always uses integer datatypes, the value of an identity column can't be NULL. This column also is not updateable. 
+	Identity columns ensure data integrity in 3 ways: domain (each value only occors once), entity (the value is unique) and referential (you can safely use this column to refer to this table).
+	Example: 
+	\begin{lstlisting}[language=sql]
+create table  student(
+	studentno int identity(1, 1) not null primary key,
+	lastname varchar(30) not null,
+	firstname varchar(30) not null,
+	gender char(1) default 'M' check(gender in ('M', 'F')) not null,
+	ssno int not null,
+	class smallint null,
+	photograph varbinary(max) null,
+	constraint ssno_u unique(ssno),
+	constraint class_fk foreignkey(class) 
+		references class(classID)
+)	\end{lstlisting}
+	The \textbf{CHECK} constraint: checked with INSERT and UPDATE \\
+	The \textbf{UNIQUE} constraint: specifies that 2 rows can have the same value for a certain column \\
+	The \textbf{PRIMARY KEY} constraint: only 1 of these per table, can be defined as 1 or a combo of columns (= composed key), the value has to be unique and NOTNULL \\
+	The \textbf{FOREIGN KEY} constraint: used to link 2 tables, NULL values are allowed, this constraint guarantees referential integrity. There are a few extra options; 
+	\begin{itemize}
+		\item ON DELETE
+		\begin{itemize}
+			\item CASCASE : cascaded delete
+			\item NO ACTION : delete only if no referring values, otherwise : error, this is the default
+			\item SET NULL : referring values are set to NULL (only possible if no NOTNULL constraint on FK columns)
+			\item SET DEFAULT : referring values are set to the default value. 
+		\end{itemize}
+		\item ON UPDATE
+		\begin{itemize}
+			\item CASCADE : cascaded update
+			\item NO ACTION : update only if no referring valeus, otherwise: error, this is the default
+			\item SET NULL : referring values are set to NULL
+			\item SET DEFAULT : referring values are set to their defaults.
+		\end{itemize}
+	\end{itemize}	
+	\chapter{Window Functions}
+	Example: you want to compare the sales numbers from last year to those of this year, window functions offer a solution to these kind of problems in a single, efficient SQL query. They use the OVER clause to do so. The results of a SELECT are partitioned, there is numberng, ordering and aggregate functions per partition. The partition behaves as a window that shifts over the data, hence the name window function. \\
+	Instead of solving the problem with a inefficient subquery: 
+	\begin{lstlisting}[language = sql]
+SELECT orderid, orderdate, orderamount,
+	(SELECT sum(orderamount)
+	 FROM orders 
+	 WHERE year(orderdate) = year(o.orderdate) 
+	 	     and orderid <= o.orderid) YTD
+FROM orders o 
+ORDER BY orderid	\end{lstlisting}
+	We wil now use a window function to simply and improve the query: 
+	\begin{lstlisting}[language=sql]
+SELECT orderid, orderdate, orderamount,
+	sum(orderamount) OVER 
+	(partition by year(o.orderdate) order by o.orderid) YTD
+FROM orders o
+ORDER BY orderid	\end{lstlisting}	
+	The partition is optional, the order by is mandatory. \\The function \textbf{row\_number()} gives each row a running sequence number, no duplicates occur in the same partition. \\ \textbf{rank()} gives each row a rank withing the partition, dupplicates can occur : 1, 2, 3, 3, 5.\\ \textbf{dense\_rank()} makes it so that there are no gaps withing the ranking $\longrightarrow$ 1, 2, 3, 3, 4. 
+	\section{moving aggregate}
+	The real meaning of window functions is to have a window that shifts over the result set, previous examples work with default window : start of resultset to current row. The solution of the previous section could also have been: 
+	\begin{lstlisting}[language=sql]
+SELECT orderid, orderdate, orderamount,
+sum(orderamount) OVER 
+	(partition by year(o.orderdate) order by o.orderid
+	range between unbouded preceding and current row) YTD
+FROM orders o
+ORDER BY orderid	\end{lstlisting}
+	with range, you have 3 valid options: 
+	\begin{lstlisting}[language = sql]
+range between unbouded preceding and current row
+range between current row and unbouded following
+range between unbouded preceding and unbouded following	\end{lstlisting}
+	When you use range, the current row is compared to other rows and grouped based on the ORDER BY predicate. This is not always desirable, you might actually want a physical offset. In this case you would specify ROWS instead of RANGE, this also gives you 3 options: 
+	\begin{lstlisting}[language = sql]
+rows between N preceding and current row
+rows between current row and N following
+rows between N preceding and M following	\end{lstlisting}
+
+	\section{LAG and LEAD}
+	Window functions LAG and LEAD refer to previous and next line respectively
+<<<<<<< HEAD
+	\chapter{DB programming}
+	\section{SQL as complete language}
+	\subsection{Persistent Stored Modules}
+	Originally SQL was not a complete programming language, by adding variables, constants, datatypes, operators, controle stuctures (if, case, while, for), it became one. The dialect is very important here, the code you wil find here can only be used for Microsoft transact SQL. We can now make use of user defined functions, since some of the built-in functions don't meet our requirements.
+	\section{TRANSACT SQL}
+	\subsection{local variables}
+	\begin{lstlisting}[language = sql]
+-- variable names always start with @
+DECLARE @variable_name1 data_type [, @variable_name2 datatype ...]
+
+--asign value to a variale 
+SET @variable_name = expression
+SELECT @variable_name = column_spec
+
+--set and select are equivalent, but only set is ANSI	\end{lstlisting}
+	\subsection{Error handling in TRANACT SQL}
+	\begin{itemize}
+		\item \textbf{RETURN} : immediate end of execution of the batch procedure
+		\item \textbf{@@error} : contains error number of last executed SQL instruction, if value = 0, OK
+		\item \textbf{RAISERROR} : returns user defined error or system error 
+		\item Use of TRY ...  CATCH block
+	\end{itemize}
+	\section{Stored Procedures}
+	example: delete a customer
+	\begin{lstlisting}[language = sql]
+create procedure DeleteCustomer @custno int = NULL
+as
+if @custno IS NULL	
+	begin print 'Please provide a customerid'
+	return 
+end
+if not exists (select null from customer where customerid = @custno)
+begin
+	print 'The customer doesn' exist.'
+	return 
+end 
+if exists (select null from orders where customerid = @custno)
+begin 
+	print 'The customer already has orders and can's be removed'
+	return 
+end
+delete from customer where customerid = @custno
+print 'The customer has been succesfully deleted.'\end{lstlisting}
+	 A stored procedure is a collection of SQL and control-of-flow commands (program) that is stored as a database object.
+	 \section{cursors}
+	 SQL statements are processing complete resultsets and not individual rows. Cursors allow to process individual rows to preform complex, row specifik operations that can't (easily be preformed with a single SELECT, UPDATE or DELETE statement. It is a datbase object that refers to the result of a query. It allows to specify the row from the resultset you wish to process.
+	There are 5 important cursor related statements: 
+	\begin{enumerate}
+		\item \textbf{DECLARE CURSOR} : creates and defines the cursor
+		\begin{lstlisting}[language = sql]
+DECLARE <cursor_name> [INSENSITIVE][SCROLL] CURSOR FOR
+<SELECT_statement> 
+[FOR {READ ONLY | UPDATE[OF <column list>]}]\end{lstlisting}
+		\begin{itemize}
+			\item INSENSITIVE : the cursor uses a temporary copy of the data, the cursor can't be used to change data 
+			\item SCROLL : all fetch operations (FIRST, LAST, PRIOR, NEXT, RELATIVE, ABSOLUTE) are allowed, if scroll is omitted, only NEXT is available
+			\item READ ONLY : prohibits data changes 
+			\item UPDATE : data changes are allowed
+		\end{itemize}
+		\item \textbf{OPEN} : opens the declared cursor
+		\begin{lstlisting}[language = sql]
+OPEN <cursor_name>\end{lstlisting}
+		\item \textbf{FETCH} : fetches 1 row
+		\item \textbf{CLOSE} : closes the cursor (counterpart to OPEN)
+		\item \textbf{DEALLOCATE} : remove the cursor definition (counterpart to DECLARE)
+	\end{enumerate}
+\end{document}
+=======
+		
+\end{document}
+>>>>>>> 594aa8ffe7ac1c0ef238e1e089c7e455bc917ed8
