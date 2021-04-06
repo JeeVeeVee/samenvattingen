@@ -1,0 +1,96 @@
+\documentclass{report}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[a4paper, total={6in, 10in}]{geometry}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
+\graphicspath{ {images/} }
+\title{Operating Systems\\ HoGent}
+\author{JeeVeeVee}
+\date{2020/2021}
+\begin{document}
+	\maketitle
+   	\tableofcontents
+   	\chapter{besturingssysteem}
+	   	\section{Wat is een besturingssysteem}
+		   	Een besturingssysteem is de link tussen hardware en de gebruiker.  Zonder besturingssysteem zou de gebruiker rechtstreeks de hardware moeten aanspreken, wat quasi onmogelijk is. 
+		  	Een besturingssysteem is een programma dat het mogelijk maakt de hardware van een computer te gebruiken. Een afkorting die vaak wordt gebruikt is OS (Operating System)
+		   	De taken van een OS zijn : 
+		   	\begin{itemize}
+		   		\item opslaan en ophalen van info 
+		   		\item programma's afschermen 
+		   		\item gegevenstroom regelen 
+		   		\item prioriteiten regelen
+		   		\item beheer en delen van bronnen 
+		   		\item tijdelijke samenwerking tussen programma's mogelijk maken 
+		   		\item reageren op fouten 
+		   		\item tijdsplanning maken 
+	  		\end{itemize}
+	  	 	Voorbeelden van OS's zijn Windows, MacOS, linux distros,...
+	  	 \section{Soorten besturingssystemen}
+	  	 	We maken een onderscheid tussen : 
+	  	 	\begin{itemize}
+	  	 		\item single-tasking systemen 
+	  	 		\item multi-tasking single user systemen 
+	  	 		\item multi-user systemen 
+	  	 	\end{itemize}	  	 	
+  	 	\section{Concepten van besturingssystemen}
+  	 		\subsection{verschillende lagen}
+  	 			Veel OS's implementeren de interface tussen gebruiker en computer als een reeks stappen of lagen. In de toplaag zijn de functies vastgelegd en de onderste laag bevat de details van het laagste niveau om deze functies uit te voeren. De gebruiker communiceert altijd met de bovenste laag, deze laag noemen we de shell of de command interpreter. De shell geeft op zijn beurt de opdrachten door aan de laag onder hem. Uiteindelijk komt de opdracht (versnippert) aan bij de onderste laag : de kernel. De kernel is het hart van het OS. 
+  	 		\subsection{programma's en taken}
+  	 			Een OS zorgt ervoor dat taken uitgevoerd worden, we maken hierbij een onderscheid tussen : 
+  	 			\begin{itemize}
+  	 				\item interactieve programma's
+  	 					\subitem een programma dat de gebruiker vanaf de terminal activeert, over het algemeen is dit een korte opdracht, er wordt vaak een \textbf{snelle respons} verwacht.
+  	 				\item batch programma's
+  	 					\subitem programma's die geen directe respons verwachten, de opdrachten worden opgeslaan in een file, en worden toegevoegd aan een batch queue.
+  	 				\item real-time programma's
+  	 					\subitem Er is spraken van een tijdsbeperking, vaak nog snellere respons dan bij interactieve programma's
+  	 			\end{itemize}
+   			\subsection{processen}
+   				Een proces zijn 1 of meerdere opdrachten die door een programma worden beschouwd als 1 eenheid. Een programma of taak bestaat vaak uit 1 of meerdere processen. Elk proces is dus onafhankelijk en dingt mee naar het gebruik van bronnen. Een OS houdt zich vaak voornamelijk bezig met het uitvoeren van processen, het verdeelt de bronnen en bepaald de volgorde.
+   			\subsection{resources}
+   				In eerste instantie moet een proces resources aanspreken. Het OS moet dan : 
+   				\begin{itemize}
+   					\item zorgen voor voldoende geheugen voor het proces
+   						\subitem Een proces moet zijn instructies en gegevens kunnen opslaan. Geheugen is echter eindig, en dus moet het OS het verdelen. 
+   					\item het gebruik van de CPU regelen 
+   						\subitem Er zijn gewoonlijk meer processen dan CPU's, en dus moet het OS het gebruik ervan regelen, dit gebeurt op basis van prioriteit.
+   					\item de gegevensstroom regelen van of naar randapparatuur
+   						\subitem bv printers waar meerdere mensen op willen printen
+   					\item bestanden of records kunnen lokaliseren
+   						\subitem het lokaliseren van files en records 
+   				\end{itemize}
+   			\subsection{Scheduling}
+   				Bij multi-tasking, en in het bijzonder mulit-user systemen is scheduling heel erg belangerijk. Scheduling verwijst naar de manier waarop processen een prioriteit krijgen toegewezen, vaak in combo met een prioriteiten wachtrij, dit komt later nog aan bod.
+   			\subsection{Concurrency}
+   				Processen zijn vaak niet onafhankelijk, ze zijn dan concurrent. Dit wil zeggen dat 2 processen soms ook dezelfde resources aanspreken, dit zorgt voor conflicten. Het OS moet de volgorde van de processen zodanig regelen, dat die conflicten worden vermeden, dit noemt \textbf{syncronisatie}.
+   	\chapter{Virtualisatie \& Cloud}
+   		
+  	 				
+  	 		
+\end{document}

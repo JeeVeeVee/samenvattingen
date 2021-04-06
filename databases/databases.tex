@@ -2,6 +2,7 @@
 \usepackage{graphicx}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage[a4paper, total={6in, 10in}]{geometry}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -89,7 +90,6 @@
 			\item substring
 			\item replace
 		\end{itemize}
-	\pagebreak
 		\item DateTime
 		\begin{itemize}
 			\item DateAdd
@@ -172,11 +172,11 @@ ON Teams.playerno = Player.playerno\end{lstlisting}
 	with \textbf{UNION} you can combine the result of 2 queries, but the 2 results need to have the exact same SELECT's
 	example : 
 	\begin{lstlisting}[language=SQL]
-	SELECT lastname + '' + firstname AS name, city, postalcode)
-	FROM Employee
-	UNION
-	SELECT customername, city, postalcode
-	FROM Customer\end{lstlisting}
+SELECT lastname + '' + firstname AS name, city, postalcode)
+FROM Employee
+UNION
+SELECT customername, city, postalcode
+FROM Customer\end{lstlisting}
 	\textbf{INTERSECT} returns all the records that are in both of the query-results
 	\textbf{EXCEPT} returns all records that are only in the first query-result
 	
@@ -201,7 +201,7 @@ FROM players as p
 WHERE NOT EXISTS(
 	SELECT * FROM matches WHERE playerno = p.playerno)\end{lstlisting}
 	Subqueries can also be used in the SELECT, and FROM clauses
-	\pagebreak
+
 	\section{DML basic tasks}
 	\begin{itemize}
 		\item INSERT to add data
@@ -235,7 +235,6 @@ VALUES (10000, 'Energy bar')\end{lstlisting}
 	\begin{lstlisting}[language=SQL]
 INSERT INTO product
 VALUES (10000, 'Energy bar', null, null, null, null, null, null)\end{lstlisting}
-\pagebreak
 	\subsection{modifing data - UPDATE}
 	To change all rows in a table: 
 	\begin{lstlisting}[language=SQL]
@@ -305,7 +304,7 @@ FROM fines;	\end{lstlisting}
 	We use CTE to abreviate Common Table Expression.
 	\\
 	CTE's look a lot like views, the difference is that a CTE only exists during the SELECT-statement and that the CTE is not visible for other users and applications. They also look a bit like Subqueries, since they are both virtual tables, difference here is that a CTE can be reused, a CTE is defined on top of the query, instead of within the clause where it is used. A simple subquery can always be replaced by a CTE.
-	\pagebreak
+
 	\subsection{recursive CTE's}
 	recursive means that we continue to execute a CTE until a condition is reached.
 	This allows us to solve problems like : 
@@ -343,7 +342,7 @@ with numbers(number) as
  		\item defning indexes 
  		\item defining views (see previous chapter)
  	\end{itemize}
- \pagebreak
+
  	\section{DDL - Database}
  	The data from a database is stored within data files, these often have a .mdf or .ndf extenstion. A database also stores log files, these have a .ldf extension.
  	A database is created by a sysadmin, who has the correct permissions. It is done by making a copy of a "model" database. 
@@ -378,7 +377,7 @@ CREATE TABLE table_name (
 	 <computed_column_definition> |
 	 <column_set_definition}
 	[table_constraint] [, ...n] )\end{lstlisting}
-	\pagebreak
+
 	\subsection{changing tables}
 	Adding, changing or removing columns. Using the ALTER keyword followed by MODIFY, ADD, DROP. 
 	\begin{lstlisting}[language=sql]
@@ -410,7 +409,7 @@ ALTER TABLE student
 		\item approximate numerics
 			\subitem float
 			\subitem real
-\pagebreak
+
 		\item Date and time
 			\subitem datetime
 			\subitem smalldatetime
@@ -485,7 +484,7 @@ SELECT orderid, orderdate, orderamount,
 	(partition by year(o.orderdate) order by o.orderid) YTD
 FROM orders o
 ORDER BY orderid	\end{lstlisting}	
-	The partition is optional, the order by is mandatory. \\The function \textbf{row\_number()} gives each row a running sequence number, no duplicates occur in the same partition. \\ \textbf{rank()} gives each row a rank withing the partition, dupplicates can occur : 1, 2, 3, 3, 5.\\ \textbf{dense\_rank()} makes it so that there are no gaps withing the ranking $\longrightarrow$ 1, 2, 3, 3, 4. \pagebreak
+	The partition is optional, the order by is mandatory. \\The function \textbf{row\_number()} gives each row a running sequence number, no duplicates occur in the same partition. \\ \textbf{rank()} gives each row a rank withing the partition, dupplicates can occur : 1, 2, 3, 3, 5.\\ \textbf{dense\_rank()} makes it so that there are no gaps withing the ranking $\longrightarrow$ 1, 2, 3, 3, 4. 
 	\section{moving aggregate}
 	The real meaning of window functions is to have a window that shifts over the result set, previous examples work with default window : start of resultset to current row. The solution of the previous section could also have been: 
 	\begin{lstlisting}[language=sql]
@@ -508,5 +507,70 @@ rows between N preceding and M following	\end{lstlisting}
 
 	\section{LAG and LEAD}
 	Window functions LAG and LEAD refer to previous and next line respectively
-		
+	\chapter{DB programming}
+	\section{SQL as complete language}
+	\subsection{Persistent Stored Modules}
+	Originally SQL was not a complete programming language, by adding variables, constants, datatypes, operators, controle stuctures (if, case, while, for), it became one. The dialect is very important here, the code you wil find here can only be used for Microsoft transact SQL. We can now make use of user defined functions, since some of the built-in functions don't meet our requirements.
+	\section{TRANSACT SQL}
+	\subsection{local variables}
+	\begin{lstlisting}[language = sql]
+-- variable names always start with @
+DECLARE @variable_name1 data_type [, @variable_name2 datatype ...]
+
+--asign value to a variale 
+SET @variable_name = expression
+SELECT @variable_name = column_spec
+
+--set and select are equivalent, but only set is ANSI	\end{lstlisting}
+	\subsection{Error handling in TRANACT SQL}
+	\begin{itemize}
+		\item \textbf{RETURN} : immediate end of execution of the batch procedure
+		\item \textbf{@@error} : contains error number of last executed SQL instruction, if value = 0, OK
+		\item \textbf{RAISERROR} : returns user defined error or system error 
+		\item Use of TRY ...  CATCH block
+	\end{itemize}
+	\section{Stored Procedures}
+	example: delete a customer
+	\begin{lstlisting}[language = sql]
+create procedure DeleteCustomer @custno int = NULL
+as
+if @custno IS NULL	
+	begin print 'Please provide a customerid'
+	return 
+end
+if not exists (select null from customer where customerid = @custno)
+begin
+	print 'The customer doesn' exist.'
+	return 
+end 
+if exists (select null from orders where customerid = @custno)
+begin 
+	print 'The customer already has orders and can's be removed'
+	return 
+end
+delete from customer where customerid = @custno
+print 'The customer has been succesfully deleted.'\end{lstlisting}
+	 A stored procedure is a collection of SQL and control-of-flow commands (program) that is stored as a database object.
+	 \section{cursors}
+	 SQL statements are processing complete resultsets and not individual rows. Cursors allow to process individual rows to preform complex, row specifik operations that can't (easily be preformed with a single SELECT, UPDATE or DELETE statement. It is a datbase object that refers to the result of a query. It allows to specify the row from the resultset you wish to process.
+	There are 5 important cursor related statements: 
+	\begin{enumerate}
+		\item \textbf{DECLARE CURSOR} : creates and defines the cursor
+		\begin{lstlisting}[language = sql]
+DECLARE <cursor_name> [INSENSITIVE][SCROLL] CURSOR FOR
+<SELECT_statement> 
+[FOR {READ ONLY | UPDATE[OF <column list>]}]\end{lstlisting}
+		\begin{itemize}
+			\item INSENSITIVE : the cursor uses a temporary copy of the data, the cursor can't be used to change data 
+			\item SCROLL : all fetch operations (FIRST, LAST, PRIOR, NEXT, RELATIVE, ABSOLUTE) are allowed, if scroll is omitted, only NEXT is available
+			\item READ ONLY : prohibits data changes 
+			\item UPDATE : data changes are allowed
+		\end{itemize}
+		\item \textbf{OPEN} : opens the declared cursor
+		\begin{lstlisting}[language = sql]
+OPEN <cursor_name>\end{lstlisting}
+		\item \textbf{FETCH} : fetches 1 row
+		\item \textbf{CLOSE} : closes the cursor (counterpart to OPEN)
+		\item \textbf{DEALLOCATE} : remove the cursor definition (counterpart to DECLARE)
+	\end{enumerate}
 \end{document}
