@@ -1,5 +1,5 @@
 #afvalfiles 
 *.aux
 *.log
-*.syntex.gz
+*.synctex.gz
 *.toc
