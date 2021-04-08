@@ -6,6 +6,7 @@
 \usepackage[a4paper, total={6in, 10in}]{geometry}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{tikz}
 
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -210,5 +211,95 @@
 	  				\end{cases}\]
 	  				Alsook : 
 	  				\[	\mu_X = \frac{1}{\lambda} \textrm{ en } \sigma_X^2 = \frac{1}{\lambda^2}\]
-	  		
+	\chapter{Bomen en Grafen}
+	  	\section{Bomen}
+	  		\subsection{Terminologie}
+	  			\textbf{Een gewortelde boom} T is een verzameling van \textit{toppen} die aan de volgende eigenschappen voldoet: 
+	  			\begin{enumerate}
+	  				\item er is 1 speciale top t die de \textbf{wortel} van de boom wordt genoemd.
+	  				\item De andere toppen zijn verdeeld in \(m \geq 0\) disjuncte verzamelingen \(T_1, ..., T_m\) die op hun beurt elk weer een gewortelde boom zijn.
+	  			\end{enumerate}
+  				De bomen  \(T_1, ..., T_m\) noemen de de \textbf{deelbomen} van T. De wortels \(t_1, ..., t_m\) worden op hun beurt de \textbf{kinderen} van de wortel t genoemd, terwijl t de \textbf{ouder} is van \(t_1, ..., t_m\), de termen \textbf{afstammeling} en \textbf{voorouder} zijn logische uitbreidingen. Het aantal deelbomen van een top wordt de \textbf{graad} van die top genoemd. Een \textbf{blad} is een top met graad 0. De \textbf{graad} van een boom wordt gedefinieerd als het maximum van de graden van zijn toppen. De \textbf{diepte} van een top n met betrekking to een boom T wordt gedefinieerd als volgt : de diepte van de wortel van T is null, terwjil de diepte van elke andere top 1 meer is dan die diepte van zijn ouder. De \textbf{diepte} van een boom T is de maximale diepte van zijn toppen, de \textbf{hoogte} van een boom wordt gegeven door de hoogte van zijn wortel, die wordt gegeven door de diepte van de boom, diepte en hoogte van een boom zijn dus altijd gelijk.
+  		\section{datastructuren voor bomen}
+  			\subsection{Array-van-kinderen voorstelling}
+  				De eenvoudigste manier om een boom voor te stellen is door de rechtstreekse ouder-kind relatie te implementeren. Deze methode zorgt er echter voor dat je een situatie kan creëren die zorgt voor veel ongebruikt geheugen.
+  			\subsection{Eerste-kind-volgende-broer voorstelling}
+  				Bij deze methode, houden we in elke top enkel zijn eerste kind en zijn eerste broer bij, dit zorgt ervoor dat efficiënter omgaan met het geheugen (aangezien je maar 2 referenties per node hebt)
+  		\section{Recursie op bomen}
+  			\subsection{Alle toppen van een boom bezoeken}
+  				Er zijn 2 manieren : 
+  				\begin{enumerate}
+  					\item preorder : je bezoekt eerst de eerste wortel en gaat dan naar zijn kinderen. 
+  					\item postorder : je bezoekt eerst de kinderen van de top en daarna de top zelf.
+  				\end{enumerate}
+  			\subsection{Eenvoudige berekeningen op bomen}
+  				eigelijk leggen ze in de cursus hier gwn basic recursie uit...
+  		\section{Binaire bomen}
+  			\subsection{Definitie en eigenschappen}
+  				Een \textbf{binaire boom} is een verzameling toppen die ofwel : 
+  				\begin{enumerate}
+  					\item leeg is
+  					\item bestaat uit een wortel die 2 disjuncte verzamelingen \(T_l\) en \(T_r\) die op hun beurt ook een binaire boen zijn, we noemen  \(T_l\) en \(T_r\) de \textbf{linker- en rechterdeelboom} van de wortel.
+  				\end{enumerate}
+  				Binaire bomen voldoen aan een paar eigenschappen : 
+  				\begin{itemize}
+  					\item In een binaire boom is het aantal toppen met diepte k hoogstens \(2^k\)
+  					\item Voor een (niet-lege) binaire boom T met diepte d geldt : \[d + 1 \leq \#(T) \leq 2^{d + 1} - 1\]
+  				\end{itemize}
+  			\subsection{voorstelling van een binaire boom}
+  				idk, dit stuk in de cursus ging nergens over 
+  			\subsection{Alle toppen van een binaire boom bezoeken}
+  				Bij in binaire boom wordt de linkerdeelboom bijna doorlopen voor de rechter, aangezien een binaire boom een boom is, kunnen we die nog altijd post en preorder doorlopen?. Aangezien we nu zeker zijn dat elke top 2 deelbomen heeft, ontstaat er ook een 3de mogelijkheid om een binaire boom te doorlopen, we kunnen namelijk de wortel bezoeken tussen de linker en de rechter deelboom.We noemen deze methode de \textbf{inorde}.
+  		\section{Binaire zoekbomen}
+  			In een computerprogramma is het bijhouden van een verzameling waarden een vaak voorkomende activiteit, we wensen daarbij : 
+  			\begin{itemize}
+  				\item gegevens toe te voegen aan de verzameling
+  				\item gegevens verwijderen uit de verzameling
+  				\item controleren of een element in de verzameling zit
+  			\end{itemize}
+  			Datastructuren als linked lists, en hash tabellen hebben al deze functionaliteiten. Een andere optie is de binaire zoekboom. Noodzakelijke voorwaarde voor het gebruik van een binaire zoekboom, is dat de gegevns een totaal geordende verzameling vormen, dit wil zeggen dat elke x en y uit de labels voldoen aan : 
+  			\[x < y | y > x | x = y\]
+  			De labels van een binaire zoekboom noemen we dan ook vaan \textbf{sleutels}.
+  			Een \textbf{binaire zoekboom} is een gelabelde binaire boom die aan de binaire zoekboomeigenschap voldoet. 
+  			De \textbf{binaire zoekboomeigenschap}: voor elke top x van de binaire zoekboom geldt dat alle toppen in de linkerdeelboom van x een label hebben dat kleiner is dan het label van x, terwijl alle toppen uit de rechterdeelboom van x een groter label hebben dan het label van x.
+  			\subsection{Opzoeken van een sleutel in een binaire zoekboom}
+  				Door de binaire zoekboomeigenschap kunnen we snel uitmaken of x aanwezig is in de zoekboom of niet. Als de boom leeg is, dan zit x er niet in, als x kleiner is dan het label van de top, dan zit hij misschien in de linkerdeelboom en check je die, als hij groter is dan het label van de top, dan zit hij misschien in de rechterdeelboom en check je die, en als hij hetzelfde label heeft als de top, dan zit hij er in. 
+  			\subsection{Toevoegen van een sleutel aan een binaire zoekboom}
+  				Ga op zoek naar de plaats van x, als je x vindt, dan kan je hem niet meer toevoegen aan de boom want hij zit er al in, kom je uit op een null veld, dan moet je x op die plek toevoegen.
+  			\subsection{Verwijderen van een sleutel uit een binaire zoekboom}
+  				Deze is net iets complexer, we onderscheiden 3 gevallen : 
+  				\subsubsection{Sleutel bevindt zich in een blad}
+  					Verwijder het blad
+  				\subsubsection{Sleutel bevindt zich in een top met 1 kind}
+  					je verwijdert x en voegt het ene kind van x toe op de plek waar x eerder stond
+  				\subsubsection{De sleutel bevindt zich in een top met 2 kinderen aka you worst nighmare}
+  					Ga op zoek naar het kleinste element uit de rechterdeelboom, dit element y is de "opvolger" van x, verwijder y uit de rechterdeel boom, en voeg het toe waar x eerder stond.  
+  			\subsection{tijdscomplexiteit van de bewerkingen}
+  				In het slechtste geval is de uitvoeringstijd evenredig met de diepte van de boom. We kunnen echter aantonen dat het gemiddeld geval, de resulterende boom een diepte zal hebben die \(\Theta(lg(n))\)
+  		\section{Binaire hopen}
+  			\subsection{Prioriteitswachtrij}
+  				Een \textbf{Prioriteitswachrij} is een uitbreiding van de gewone FIFO wachtrij. De elementen van een wachtrij bestaan typisch uit 2 delen : de sleutel en een waarde, de sleutel geeft in deze de prioriteit aan, kleinere sleutel duidt op een grotere prioriteit. Men kan de kleinste sleutel zoeken, het element met de kleinste sleutel verwijderen en een nieuwe element toevoegen aan de wachtrij.
+  			\subsection{Implementatie als binaire hoop}
+  				Een \textbf{complete binaire boom} is een binaire boom van diepte d waar het aantal toppen met diepte k < d maximaal (dus \(2^k\)) is. De toppen met diepte d komen voor van links naar rechts. 
+  				\\ 
+  				De \textbf{Orderningseigenschap voor binaire hopen} zegt dat de sleutel van elke top hoogstens gelijk is aan de kleinste sleutel van zijn kinderen. 
+  			\subsection{Implementatie}
+  				Men kan een binaire hoop implementeren als binaire boom, waarbij men voor elke top het linker en rechter kind bijhoudt. Aangezien de binaire boom echter steeds compleet is, bestaat er een eenvoudige (en snellere) manier die een gewone array gebruikt. De omezetting van boom naar array volgt volgende eigenschap : de top heeft rangnummer i, dan hebben de linker en rechter kind rangnummer 2i en 2i + 1.
+  			\subsection{Opzoeken van het element met de kleinste sleutel}
+  				Het kleinste element zit steeds in de top (door de orderningseigenschap), deze kan dus altijd worden uitgevoerd in constante tijd.
+  			\subsection{Toevoegen van een element}
+  				\begin{enumerate}
+  					\item creëer een nieuw element
+  					\item voeg het toe op de eerst beschikbare plek, hou er rekening mee dat het diepste niveau gevuld is van links naar rechts.
+  					\item  hou zou kunnen dat je de orderningseigenschap hebt geschonden , als de ouder groter is van het kind, wissel ze dan op, is de eigenschap dan nog niet voldaan, herhaal dan tot dit wel het geval is.
+  				\end{enumerate}
+  			\subsection{Verwijderen van het element met de kleinste sleutel}
+  				\begin{enumerate}
+  					\item verwissel de wortel met het meest rechtse blad met de grootste diepte
+  					\item verwijder het meest rechtse blad (vroegere wortel): de binaire hoop heeft nu 1 element minder.
+  					\item ga op zoek naar schendingen tegen de orderningseigenschap en verwissel ouder en kind tot deze zijn verheven. 
+  				\end{enumerate}
+  			\subsection{Tijdscomplexiteit van de bewerkingen}
+  				In het slechtste geval is de tijdscomplexiteit \(\Theta(lg(n))\).
+  				
 \end{document}
