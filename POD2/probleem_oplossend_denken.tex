@@ -1,0 +1,214 @@
+\documentclass{report}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage[a4paper, total={6in, 10in}]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
+\graphicspath{ {images/} }
+\title{Probleem Oplossend Denken II\\ HoGent}
+\author{JeeVeeVee}
+\date{2020/2021}
+\begin{document}
+	\maketitle
+   	\tableofcontents
+   	\chapter{Kansrekening}
+   		\section{Gebeurtenissen en hun kansen}
+   			\subsection{Universum of uitkomsten ruimte}
+   				\textbf{Het universum}, of uitkomstenruimte is van een experiment is de verzameling van alle mogelijke uitkomsten van dat experiment. Deze wordt genoteerd als $\Omega$.
+   			\subsection{Gebeurtenissen}
+   				\textbf{Een gebeurtenis} is een deelverzameling van de uitkomstenruimte. Een \textit{enkelvoudige of elementaire} gebeurtenis is een singleton; een \textit{samengestelde gebeurtenis} heeft een kardinaliteit van meer dan 1.
+   			\subsection{Kansen en kansruimte}
+	   			Als we we aan een gebeurtenis A een getal willen koppelen dat uitdrukt hoe waarschijnlijkheid het is dat deze gebeurtenis voorkomt bij het uitvoeren van een experiment, dan noemen we dit getal \textbf{de kans} of de waarschijnlijkheid van A, we noteren: P(A).
+	   			\\
+	   			De kansen van gebeurtenissen voldoen aan 3 regels: 
+	   			\begin{enumerate}
+	   				\item Kansen zijn steeds positief: 
+	   				\begin{center}
+	   					$P(A) \geq 0$
+	   				\end{center}
+   					\item De uitkomstenruimte heeft kans 1: 
+   					\begin{center}
+   						$P(\Omega) = 1$
+   					\end{center}
+   					\item Wanneer A en B \textit{disjunct} zijn, dan geldt: 
+   					\begin{center}
+   						$P(A \cup B) = P(A) + P(B)$
+   					\end{center}
+   					Dit noemen we de somregel.
+	   			\end{enumerate}
+  				Als de functie P voldoet aan allle bovenstaande eugenschappen, dan is het 3-tal $(\Omega, P(\Omega), P)$ een \textbf{kansruimte}.
+  				\\
+  				Kansen voldoen ook nog aan andere regels:
+	  				
+	  					 \begin{center}
+	  						$\forall A : P(\bar{A}) = 1 - P(A)$
+	  						\end{center}
+  						 \begin{center}
+  							$P(\emptyset) = 0$
+  						\end{center}
+	  					 \begin{center}
+	  						$\forall A \subseteq B : P(A) = P(B) -  P(B \backslash A)$
+	  					\end{center}
+  						 \begin{center}
+  							$P(A \cup B) = P(A) + P(B) - P(A \cap B)$
+  						\end{center}
+  				\pagebreak
+  				\subsection{Voorwaardelijke kansen en (on)afhankelijkheid van gebeurtenissen}
+  					Als $P(B) > 0$, dan is de \textbf{voorwaardelijke kans} dat A voorkomt gegeven B, gedefinieerd als : 
+  					\begin{center}
+  						$P(A|B) = (\frac{P(A\cap B)}{P(B)})$
+  					\end{center}
+	  			2 gebeurtenissen zijn \textbf{onafhankelijk} als: 
+	  			\begin{center}
+	  				$P(A\cap B) = P(A) \cdot P(B)$
+	  			\end{center}
+  				Wanneer $A_1 \longrightarrow A_n$ n gebeurtenissen zijn waarvoor :
+  				\begin{center}
+  					$P(\bigcap_{i=0}^n A_i) > 0$
+  				\end{center}
+  				dan geldt: 
+  				\begin{center}
+  					$P(\bigcap_{i=0}^n A_i) = P(A_1) \cdot P(A_2 | A_1)\cdot P(A_3 | A_1 \cap A_2) \cdot \cdot \cdot P(A_n | A_1 \cap A_2 \cap \cdot \cdot \cdot \cap A_{n-1})$
+  				\end{center}
+  				Dit noemt men ook de \textbf{kettingregel} of productregel.
+  			\subsection{Regel van Bayes}
+  			Stel dat een gebeurtenis A n verschillende en elkaar wederzijds uitsluitende oorzaken $B_1, B_2, ..., B_n$, dus : 
+  			\begin{center}
+  				$\Omega = B_1 \cup B_2 \cup \cdot \cdot \cdot \cup B_n$
+  			\end{center}  				
+  			Dan geldt: 
+  			\begin{center}
+  				$P(A) = \sum_{i = 1}^n P(A \cap B_i)$
+  			\end{center}
+  			Dit is de \textbf{de wet van de totale onafhankelijkheid}. 
+  			\\
+  			\textbf{De regel van bayes} : Gegeven een gebeurtenis A met n elkaar wederzijds uitsluitende oorzaken $B_i$ dus : $B_i \cup B_j = \otimes als i \neq j$ en $\Omega = \bigcup_{i = 1}^n B_i$ dan geldt voor elke j : 
+  				\[P(B_j | A) =  \left (\frac{P(B_j) \cdot P(A | B_j)}{P(A)} \right) = \frac{P(B_j) \cdot P(A | B_j)}{\sum_{i=1}^{n}P(B_i) P(A|B_i)}\]
+  		\section{Kans- of toevalsveranderlijken}
+  			Een \textbf{kansvariabele X} is een afbeelding van \(\Omega \textrm{ naar }\mathbb{R} \) Deze afbeelding associeert met elke mogelijke uitkomst van een kansexperiment dus een reëel getal.
+	  		\subsection{Discrete kansvariabelen}
+	  			Een kansvariabele X is \textbf{discreet} wanneer X slecht een eindig of aftelbaar aantal waarden aaneemt.
+	  			\\
+	  			Een functie \(f_X\) : 
+	  			\[f_X : \mathbb{R} \rightarrow [0, 1] : x \longmapsto f_X(x) = P(X = x)\]
+	  			noemt men de \textbf{kansfunctie} van een discrete toevalsveranderlijke X.
+	  			\\ Een kansfunctie f voor een discrete toevalsveranderlijke X voldoet aan volgende eigenschappen : 
+	  			\[0 \leq f(x)\]
+	  			\[f(x) \leq 1\]
+	  			\[\sum_{x\in bld(X)}f(x) = 1\]
+	  			Men definieert ook een \textit{cumulatieve kansfunctie}, de \textbf{kansverdelingsfunctie}, namelijk als : 
+	  			\[F_X : \mathbb{R} \rightarrow [0, 1] : x \longmapsto F_X(x) = P(\omega \in \Omega | X(\omega) \leq x) \]
+	  		\subsection{Continue kansvariablen}
+	  			Een toevalsveranderlijke X is \textbf{continu} als er een functie \(f_X\) van \(\mathbb{R} \textrm{ naar } \mathbb{R}^+\) bestaat waarvoor : 
+	  			\[F_X(x) = \int_{-\infty}^xf_X(y)dy\]
+	  			De functie \(f_X\) wordt de kansdichtheid genoemd, en voldoet aan volgende eigenschappen : 
+	  			\[f_X(x) \geq 0\]
+	  			\[\int_{-\infty}^{+\infty}f_X(y)dy = 1\]
+	  			\[P(a \leq X \leq b)  = \int_{a}^{b}f_X(y)dy \]
+	  		\subsection{algemeen}
+	  			Voor zowel continue als discrete variabelen gelden volgende eigenschappen : 
+	  			\[dom(F) = \mathbb{R}\]
+	  			\[x < y \Rightarrow F(x) \leq F(y)\]
+	  			\[\lim_{x \to \infty}F(x) = 1\]
+	  	\section{Verwachtingswaarde en variantie}
+	  		\subsection{Discrete kansvariabele}
+	  			De \textbf{verwachtingswaarde} van een discrete toevalsveranderlijke X wordt genoteerd als \(\mu_X\) of E(X), de formule : 
+	  			\[E(X) = \mu_X = \sum_{i}x_i\cdot P(X = x_i) =  \sum_{i}x_i\cdot f_X(x_i)\]
+	  			De \textbf{variantie} van een discrete toevalsveranderlijke X, genoteerd als \(\sigma_X^2\) is de gewogen gemiddelde kwadratische afwijking tov zijn verwachtingswaarde : 
+	  			\[\sigma_X^2 = \sum_{i}(x_i - \mu_X)^2 \cdot P(X = x_i) =  \sum_{i}(x_i - \mu_X)^2\cdot f_X(x_i)\]
+	  			De eenheid van de variantie is door de kwardratering, het kwadraat van de oorspronkelijke toevalsveranderlijke, de vierkanswortel van de variantie is de \textbf{standaardafwijking} en wordt genoteerd als \(\sigma_X\).
+	  		\subsection{continue kansvariabelen}
+	  			Op analoge wijze als bij discreet, maar andere formules. de verwachtingswaarde wordt gegeven door 
+	  			\[\mu_X = \int_{-\infty}^{+\infty}xf_Xdx\]
+	  			en voor de variantie \(\sigma_X^2\): 
+	  			\[\sigma_X^2 =  \int_{-\infty}^{+\infty}(x - \mu_X)^2f_Xdx\]
+	  		\subsection{Eigenschappen van verwachtingswaarde en variantie}
+	  			\textbf{law of the unconsious statistician}: Als X een discrete toevalsveranderlijke is en g een funtie van \(\mathbb{R} \textrm{ naar } \mathbb{R}, \textrm{dan geldt}: \)
+	  			\[E(\Upsilon) = E(g(X)) = \sum_{x\in bld(X)} g(x)f_X(x) = \sum_{x\in bld(X)}g(x)P(X = x)\]
+	  			\[\textrm{Als X consant is (= k), voor alle elementen } \omega \in \Omega \Rightarrow E(X) = k\]
+	  			\[\forall a \in \mathbb{R} : E(X + a) = E(X) + a\]
+	  			\[\forall a \in \mathbb{R} : E(X\cdot a) = a\cdot E(X)\]
+	  			\[\sigma_X^2 = EX^2 - \mu_X^2\]
+	  			\[\forall a \in \mathbb{R} : \sigma_{X + a} = \sigma_X^2\]
+	  			\[\forall a \in \mathbb{R} :  \sigma_{X \cdot a} = a^2\sigma_X^2\]
+	  			Je kan voor een toevalsveranderlijke X waarvoor \(\sigma_X > 0\), een gestandaardiseerde toevalsverandelijke Z definieren als: 
+	  			\[Z = \frac{X - \mu_X}{\sigma_X}\]
+	  			Voor Z geldt dan : 
+	  			\[\mu_Z = 0 \textrm{ en } \sigma_Z^2 = 1\]
+	  	\section{Kansverdelingen}
+	  		\subsection{Discrete Kansverdelingen}
+	  			\subsubsection{Bernoulliverdeling}
+	  				Experimenten die maar 2 mogelijke uitkomsten hebben zijn \textbf{bernoulliexpoerimenten}. Als X een toevalsveranderlijke is die een Bernoulliverdeling volgt met kans op succes p, dan geldt: 
+	  				\[\mu_X = p \textrm{ en } \sigma_X^2 = p (1 - p)\]
+	  			\subsubsection{Binominale verdeling : aantal successen}
+	  				De toevalsveranderlijke die X dit telt hoeveel successen er voorkomen wanneer men n onafhankelijke Bernouilli-experimenten uitvoert volgt een \textbf{binomiale verdeling}, deze wordt gekenmerkt door 2 parameters: n, die het aantal keer uitdrukt dat het experiment werd uitgevoerd, en p, de kans op succes. we noteren : 
+	  				\[X \sim B(n, p)\]
+	  				Veronderstel dat \(X \sim B(n, p)\), dan wordt de kansfunctie van X gegeven door : 
+	  				\[f_X(k) = P(X = k) = C_n^kp^kq^{n - k} = \binom{n}{k}p^kq^{n - k}\]
+	  				Voor \(X \sim B(n, p)\) geldt : 
+	  				\[\mu_X = np \textrm{ en } \sigma_X^2 = np(1 - p)\]
+	  			\subsubsection{Geometrische verdeling : wachten op het eerste succes}
+	  				De kansveranderlijke X die het rangnummer aangeeft van het eerste succes is verdeeld volgens een \textbf{geometrische verdeling}, deze verdeling wordt volledig bepaald door p die het succes aangeeft voor 1 enkel Bernoulli-experiment.
+	  				De kansfunctie voor een geometrisch verdeelde variable X met parameter p wordt gegeven door: 
+	  				\[f_X(k) = P(X = k) = q^{k - 1}p\]
+	  				Voor X geldt dan ook : 
+	  				\[	\mu_X = \frac{1}{p} \textrm{ en } \sigma_X^2 = \frac{q}{p^2}\]
+	  			\subsubsection{Poisson verdeling : zeldzame gebeurtenisse}
+	  				Wanneer de kans p op succes zeer klein is bij een Bernoulli-experiment hebt, en er dus heel veel poging zijn om succes te behalen, dat zorgt ervoor dat het gemiddeld aantal succes op n pogingen evolueert naar de constante \(\lambda\), het aantal successen voldoet dat aan een \textbf{poisson-verdeling} met parametern \(\lambda\). De kansfunctie wordt dan gegeven door : 
+	  				\[
+	  				f_X(k) = P(X = k) = e^{-\lambda}\frac{\lambda^k}{k!}\]
+	  				Voor een toevalsveranderlijke X die poisson is verdeeld met parameter \(\lambda\) geldt: 
+	  				\[	\mu_X = \lambda \textrm{ en } \sigma_X^2 = \lambda\]
+	  		\subsection{Contintue kansverdelingen}
+	  			\subsubsection{Uniforme verdeling}
+	  				Wanneer er boven een bepaalde ondergrens a en een bepaalde bovengrens een kansdichtheid b is, met daartussen een constante kansdichtheid. De kansfunctie wordt dan gegeven door: 
+	  				\[f_X(x) = \begin{cases} 
+	  				\frac{1}{b - a} & a \leq x\leq b \\
+	  				0 & anders
+	  				\end{cases}
+	  				\]
+	  				Er geldt ook : 
+	  				\[	\mu_X = \frac{(a+b)}{2} \textrm{ en } \sigma_X^2 = \frac{(b - a)^2}{12}\]
+	  			\subsubsection{De exponentiële verdeling}
+	  				Als we hebben te maken met een Poisson-proces met parameter \(\lambda\), dan kunnen we ons afvragen wat de verdeling van de tijd T die nodig vooralleer we een eerste succes bereiken, T volgt dan een \textbf{exponentiële verdeling}. Voor T met parameter \(\lambda\) geldt dan : 
+	  				\[f_T(t) = \begin{cases}
+	  					0 & t < 0 \\
+	  					\lambda e^{-\lambda t} & t \geq 0
+	  				\end{cases}\]
+	  				en 
+	  				\[F_T(t) = \begin{cases}
+	  				0 & t < 0 \\
+	  				1 - e^{-\lambda t} & t \geq 0
+	  				\end{cases}\]
+	  				Alsook : 
+	  				\[	\mu_X = \frac{1}{\lambda} \textrm{ en } \sigma_X^2 = \frac{1}{\lambda^2}\]
+	  		
+\end{document}
