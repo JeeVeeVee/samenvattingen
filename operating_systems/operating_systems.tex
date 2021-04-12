@@ -163,11 +163,130 @@
    					\item \textbf{Private} Cloud omgeving : beperkte toegang tot 1 of meerdere organisaties, kan zelf in privaat of publiek datacenter.
    					\item \textbf{Hybride} Cloud omgeving : combinatie van meerdere modellen.
    				\end{itemize}
-   		
-   				
-   				
+   			\subsection{Service modellen (publieke cloud)}
+   				\begin{itemize}
+   					\item \textbf{infrastructure} as a Service (laaS) : de infrastructuur wordt beschikbaar voor de gebruiker, die controle heeft over het OS, de software en de (virtuele) hardware. 
+   					\item \textbf{Platform} as a Service (paaS) : platform en diensten worden aangeboden, de gebruiker heeft controle over de software, maar niet over de hardware.
+   					\item \textbf{software} as a Service (saaS) : het aanbieden van louter software zoals office 365 
+   				\end{itemize}
+   				\begin{center}
+   					\includegraphics[scale=0.4]{service_modellen}
+   				\end{center}
+   			Virtualisatie speelt een belangerijke rol binnne Cloud Computing, er worden namelijk vaak virtuele bronnen beschikbaar gesteld aan de eindgebruiker. Zonder gebruik te maken van virtualisatie zouden er veel minder klanten gebruik kunnen maken van de Cloud omgeving en zouden er veel bronnen verspild worden. 
+   			\subsection{Elasticiteit van de Cloud}
+   				Het aanbod kan zich afstellen op de vraag, waardoor bv op piekmomenten meer bronnen beschikbaar zijn dan op andere momenten. Cloud Computing is een goed voorbeel van multi-tenacy.
+   	\chapter{Processen}
+   		\section{van programma tot proces}
+   			Een programma dat geschreven is in een programmeertaal is niet meteen uitvoerbaar door de hardware, de CPU verstaat geen Java, C, C\#,... Elk programma moet dus tot een verzameling van instructies uit de instructieset van de CPU, dit proces noemt \textbf{compileren}. De code wordt dan eerst omgezet naar assambler taal, die op zijn beurt wordt omgezet naar binare code. de instructieset verschilt tussen types CPU, en het programma moet dus voor elk type CPU appart worden gecompileert.
+   			\subsection{instructiecyclus}
+   				Computerhardware werkt steeds op een oneindig lange cyclus, het bestaat uit 2 stappen : Fetch en Execute.
+   				Een CPU maakt gebruik van verschillende registers voor het uitvoeren van de cyclus : 
+   				\begin{itemize}
+   					\item PC (program counter) houdt het adres bij van de uit te voeren instructie
+   					\item IR (instruction register) : houdt de uit te voeren instructie bij
+   					\item  AC (ACumulator) : hulpregister voor opslaan van tussenresultaten
+   				\end{itemize}
+   			\subsection{interuption}
+   				Er kan altijd iets fout gaan waardoor een proces wordt stopgezet, de pc reageert hier op door een een proces te onderbreken, de fetch-execute loop wordt dan uitgebreid zodat dit mogelijk is? 
+   			\subsection{binaries}
+   				Het bestand dat wordt gegenereerd door het compilatieproces wordt een binary of een executable genoemd. Deze zijn afhankelijk van het besturingssysteem, wat er voor zorgt dat programmeurs ook voor elk verschillend besturingssysteem een apparte binary voorzien. 
+   				\\
+   				Eenmaal de binary is aangemaakt kan deze worden opgeslaan op de harde schijf, als de gebruiker dan dit programma wil uitvoeren, worden de instructies gekopieerd naar het RAM geheugen. De instantie van het programme in het RAM geheugen wordt een \textbf{proces} genoemd. Dan verandert het programma namelijk van iets passiefs naar iets actiefs. 
+   		\section{opbouw van een proces}
+   			Een \textbf{proces} is een instantie van een programma dat uitgevoerd wordt op het systeem. Ze zijn een belangerijk onderdeel van besturingsystemen. Een proces kan je zien als een soort container die alles bevat om een programma uit te voeren. Een proces is ook de reden dat meerdere programma's tegelijkertijd kunnen worden uitgevoerd. 
+   			\subsection{proces image}
+   				Een proces image is hoe een proces er uit ziet in het RAM geheugen, het bestaat uit : 
+   				\begin{itemize}
+   					\item text : de uit te voeren instructies 
+   					\item data : globale variabelen 
+   					\item stack : tijdelijke opslag voor variabelen, functieparameters, adressen,...
+   					\item heap : dynamisch gealloceerd geheugen. 
+   				\end{itemize}
+   			\subsection{Proces Control Block}
+   				Het OS heeft een overzicht van alle processen die acief zijn op het systeem. Dit overzicht heeft de vorm van een tabel en wordt ook wel de proces table genoemd. Een element uit zo een proces noemen we een \textbf{Proces Control Block}, die bevat volgende info : 
+   				\begin{itemize}
+   					\item info om het proces uniek te identificeren (id)
+   					\item info om de staat van het proces bij te houden
+   					\item info om het proces te beheren
+				\end{itemize}   
+		\section{soorten procesen}
+			\subsection{interactief proces}
+				Kan je zowel opstarten als controleren vanuit een terminal sessie, kunnen zowel in de voor- als op de achtergrond draaien. 
+			\subsection{Automatisch proces}
+				Worden ook wel batch processen genoemd, omdat er vaak meerdere zijn. Staan in een wachtrij, bij uitvoering worden alle processen uit de wachtrij 1 voor 1 uitgevoerd, en dit volgens het FIFO principe. 
+			\subsection{daemons}
+				Dit zijn processen die continu draaien, worden meestal gestart bij het opstarten van het systeem. Ook gekend als services.
+		\section{beheer van processen}
+			Het onstaan van een proces is verschillend in elk OS, hier behandelen we linux. In Linux heeft elk proces een eigen ID, de Proces IDentifier (PID). Het eerste proces dat wordt gecreëerd is steevast het opstarten van het systeem, en dit proces heeft dan ook altijd PID 1. Dit PID1 is het moederproces voor alle andere processen. Het aanmaken van een proces in linux bestaat ui het aanroepen van 2 functies : forkk() en exec(). Fork() maakt een exacte kopie van het proces in het RAM geheugen en vult de PID van het proces in, daarnaast worden ook de PPID (Parent PID). De exec() vult het nieuwe kindproces met de nodige waarden en instructies. Het einde van het proces maakt gebruik van de functie exit(), als er iets fout gaat kan er dan sprake zijn van orphan processes, processen die geen ouder meer hebben. De output van de exit() functie geeft aan of er iets fout is gegaan bij het uitvoeren, dan is de output \(\neq\) 0
+			\pagebreak
+   			\subsection{2|5|6 states}
+   				Over het algemeen hebben processen altijd 1 van 2 states, running of not running. We zouden dit echter kunnen uitbreiden naar 5 states: 
+   				\begin{itemize}
+   					\item \textbf{new} : een nieuw proces werd aangemaakt door het OS, meestal is de PCB al toegevoegd aan de process table, maar nog niet volledig geladen in het geheugen. Als er een limiet wordt gezet op het aantal processen in de wachtrij, dan kan het proces nog niet overgaan van new naar ready.
+   					\item \textbf{ready} : proces in de queue, klaar om uitgevoerd te worden door CPU
+   					\item \textbf{running} : het proces wordt uitgevoerd door CPU
+   					\item \textbf{blocked} : een proces staat te wachten op iets 
+   					\item \textbf{exit} : afgewerkt proces, niet perse goed afgewerkt!!
+   				\end{itemize}
+   				We zouden zelfs een \(6^{de}\) state kunnen toevoegen: \textbf{suspend}, dit komt voor wanneer er te weinig geheugen is, dit kan worden opgelost door data weg te schrijven naar de harde schijf. Dit proces noemt swapping, dit is een vrij intensief proces, maar als het niet gebeurt dan crasht het systeem. 
+   				\begin{center}
+   					\includegraphics[scale=0.6]{six_states}
+   				\end{center}
+   		\section{Scheduling}
+   			Een OS zal steeds proberen om de hardware zo optimaal mogelijk te gebruiken, dit wil zeggen dat het zal vermijden dat een deel van de CPU niet aan het werken is. Het is echter wel belangerijk dat de CPU Utilisation niet 100\% wordt, want dan kan de CPU geen interrupts meer verwerken! Het niet verloren laten gaan van CPU-tijd noemt men \textbf{multi-programming}	
+   			\subsection{time sharing}
+   				Time sharing is het OS dat processen kort laat afwisselen op de CPU zodat het voor de gebruiker lijkt alsof de 2 processen simultaan runnen. 
+   			\subsection{context switch}
+   				Bij het wisselen van een proces (bv bij time sharing) treedt er een \textbf{context switch op}: er wordt een \textbf{snapshot} genomen van het volledige proces en wordt bewaard in het geheugen, dan wordt er een snapshot van het ander proces ingeladen en wordt dat proces uitgevoerd.
+   			\subsection{Scheduler}
+   				De \textbf{scheduler} is verantwoordleijk voor het bepalen wanneer welk proces CPU tijd krijgt. Hij houdt daarbij rekening met : batch, interactive, realt ime. Het zijn dan ook complexe systemen. Er bestaan meedere verschillende algoritmes voor schedulers, we kunnen ze algemeen verdelen in : 
+   				\begin{enumerate}
+   					\item \textbf{non-preemptive} : algoritmes die geen gebruik maken van context switches en dus pas wisselen van proces wanneer een proces volledig is afgewerkt.
+   					\item \textbf{preemtive} : er wordt gebruik gemaakt van context switches.
+   				\end{enumerate}
+   				Enkele voorbeelden : 
+   				\begin{itemize}
+   					\item \textbf{First Come First Serve (FCFS)} : een non-preemptive algrotime dat gebruikt maak van een eenvoudig wachtrij, nieuwe processen schuiven achteraan aan. Er kan geen starvation optreden maar het zou kunnen dat korte processen lang moeten wachten.
+   					\item \textbf{Shortest Proces Next (SPN)} : een non-preemptive algoritme waarbij er gebruik wordt gemaakt van een eenvoudige wachtrij, elk proces wordt volledig afgewerkt, waarna het de beurt aan het volgende proces dat de korste uitvoeringstijd heeft op de wachtij. Korte processen kunnen snel worden uitgevoerd maar er is risico op starvation voor lange processen.
+   					\item \textbf{Shortest Remaining Time (SRT)} : een preemptive algoritme dat op dezelfde manier werkt als SPN. De korte processen worden snel uitgevoerd maar ook hier is er risico op starvation voor lange processen, bovendien is er ook de overheid bij veel wissels
+   					\item \textbf{Round Robin (RR)} : preemtive waarbij de CPU na Q eenheden wisselt naar het volgend proces in de rij, het huidige proces wordt dan achteraan de rij toegevoegd als het nog niet klaar was. Dit is heel eerlijk, maar de waarden van Q is heel belangerijk, korte processen lopen het risico lang te moeten wachten en er is de overhead door het wisselen. 
+   				\end{itemize}
+   	\chapter{Concurrency}
+   		\section{Wat is concurrency}
+   			We kunnen een onderscheid maken tussen : 
+   			\begin{itemize}
+   				\item \textbf{multiprogramming} : het beheer van meerdere processen met 1 processor
+   				\item \textbf{multiprocessing} : het beheer van meerdere processen met meerdere pcoressoren.
+   				\item \textbf{gedistrubeerde verwerking} : het beheel van meerdere processen die worden uitgevoerd op meerdere computersystemen.
+   			\end{itemize}
+   			Een \textbf{multiprocessor} is een systeem met \(>\) 1 CPU's, dergelijke systemen kunnen meerdere systemen gelijktijdig uitvoeren, dit noemen we \textbf{concurrency}. Concurrency verhoogt de producticitiveit, maar zorgt ook voor uitdagingen. \\
+   			Concurrency kan optreden in meerdere situaties, ook bij systemen met maar 1 CPU: 
+   			\begin{itemize}
+   				\item meerdere toepassingen : er zijn verschillende processen gelijktijdig actief, er wordt gebruik gemaak van multiprogramming om de processortijd dynamisch te verdelen over het aantal actieve toepassingen. 
+   				\item gestructureerde toepassingen : Als uitbeiding op de beginselen van modulair ontwerpen en gestructureerd programmeren kunnen sommige toepassingen zondag zijn geprogrammeerd asl een verzameling van een aanal actieve toepassingen (multi-threading)
+   				\item structuur van OS : OS's zelf worden vaak geïmplementeerd als een verzameling processen. 
+   			\end{itemize}
+   			\subsection{paralellism}
+   				De term \textbf{parallelism} betekent dat een toepassing zijn werk opsplitst in meerder subtaken die parallel kunnen worden verwerkt.
+   		\section{Wederzijdse uitsluiting (mutual exclusion)}
+   			Soms, als bronnen worden gedeeld over meerdere processen, dan kan het gebeuren dat meerdere processen tegelijktijd dezelfde bron willen aanspreken. Het deel van het proces dat een (gedeelde) bron aanspreekt noemen we de \textbf{kritieke sectie}. Het is belangerijk dat altijd slechts 1 proces in de kritieke sectie zit. \textbf{Wederzijdse uitsluiting} is een term die aanduid dat een 2 processen op elkaar wachten om een gedeelde bron aan te spreken. Het is niet evident om wederzijdse uitsluiting af te dwingen, je kan gebruik maken van algoritmes of andere alternatieven. 
+   		\section{Syncronisatie}
+   			\textbf{Synchronisatie} is het proces of het resultaat van iets gelijktijdig maken, in deze context is dat het opleggen van een dwingende volgorde aan events, die door concurrente asynchrone processen worden uitgevoerd. Je moet hierbij garanderen dat processen in een bepaalde volgorde verlopen. 
+   			\subsection{bestandssynchronisatie}
+   				\textbf{Bestandssynchronisatie} is een voorbeel van synchronisatie waarbij 2 of meerdere bestanden aan elkaar gelijkgesteld worden. De inhoud van deze bestanden zal dan op 2 of meerdere plekken hetzelfde zijn. (kopie) 
+   		\section{Deadlocks}
+   			Een \textbf{deadlock} is een situatie waarbij een bepaalde actie is vastgelopen op wederzijdse uitsluiting. Meerdere processen zitten tegelijkertijd in de kritieke sectie. Irl kan je ze vergelijken met overbevolkte kruispunten waar na verloop van tijd iedereen vaststaat. Je kan omgaan met deadlocks door ze te voorkomen of door ze te detecteren en herstellen. Deadlocks kunnen enkel optreden bij : 
+   			\begin{itemize}
+   				\item bron met wederzijdse uitsluiting
+   				\item proces zal bron bezet houden en wachten 
+   				\item er is geen voortijding ontemen 
+   				\item processen wachten in een kring
+   			\end{itemize}
+   			\subsection{Deadlock preventie}
+   				Basically, zrog ervoor dat der voorwaarden voor een deadlock nooit optreedt. Sommige voorwaarden zijn echter noodzakelijk, en er ontstaan nog grotere problemen als je ze opheft. Vermijden \(>\) voorkomen. Als je de mogelijkheid voor deadlocks gwn heel klein maakt, is dit vaak genoeg. Op die manier blijft de omgeving veilig. 
+   			\subsection{Deadlock signaliseren}
+   				Er bestaan algoritmes om cycles in een graaf te vinden. daarna kan je (zie volgende titel xoxo)
+   			\subsection{Deadlock herstellen}
+   				1 van de processen moet worden stopgezet via KILL, je geeft dus de bron vrij ten koste van een proces, vervolgens vindt er een rollback plaats op het proces, zodat die alsnog wordt uitgevoerd. 
    			
-   		
-  	 				
-  	 		
 \end{document}
