@@ -671,6 +671,23 @@ AS ... \end{lstlisting}
 			\subsection{SQL injection}
 				You can never trust front-end data, this data always has to be checked because it can be statements that are harmful to the database. You can do this by not allowing certain characters. 
 	\chapter{Indexes and performance}
+		Using indexes in your query makes them way faster. 
+		\section{Space allocation by SQL sever}
+			SQL server usses random access files. The space allocation is in extents (8 logical consecutive pages), and pages (8kb block of contiguous space). Extents can be uniform (when they only are used for 1 DB object) or mixex (when they are shared between 8 DB objects). A new table or index is always allocated in a mixed extent. A extension is more then 8 pages in uniform extent. 
+		\section{clustered vs non clustered indexes}
+			\subsection{Table scan}
+				A heap is an unordered collection of data-pages without clustered index, it is the default storage of a table. The access is via Index Allocation Map (IAM). A table scan is when a query fetches all pages of the table, it is something you absolotly want to avoid. The heap also has other performance issues like : fragmentation and forward pointers (if a variable length row (varchar fields) becomes longer upon update) which make table scans even slower!
+				\\
+				If a table usees indexes, the data becomes ordered in a balanced tree, which makes the retrieving of data way faster. 
+		\section{Clustered index}
+			The physical order of the rows in a table corresponds to the order in the clustered index, as a consequence, each table can have only 1 clustered index. The clustered index imposes unique values and the primary key constraint.
+		\section{non-clustered index}
+			This is the default index, it is slower then the clustered one. You can have more then one per table, there are forward and backward pointers between leaf nodes, the leaf contains key value and row locator
+		\section{covering index}
+			If a non clustered index does not completely cover a query, SQL Server preforms a lookop for each row to fetch the data. A \textbf{covering index} is a non-clustered index containing all columns necessary for a certain query. With SQL Server you could add extra columns to the index, even if those extra columns are not indexed. 
+		\section{creating indexes}
+			\begin{lstlisting}[language = sql]
+CREATE [UNIQUE] [| NONCLUSTERED] INDEX index_name ON table (kolom[,...])\end{lstlisting}
 \end{document}
 
 	
