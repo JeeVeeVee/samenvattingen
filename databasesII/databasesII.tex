@@ -2,7 +2,11 @@
 \usepackage{graphicx}
 \usepackage{listings}
 \usepackage{xcolor}
-
+\usepackage{array}
+\usepackage[a4paper, total={6in, 10in}]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{tikz}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -520,7 +524,6 @@ rows between N preceding and M following	\end{lstlisting}
 
 	\section{LAG and LEAD}
 	Window functions LAG and LEAD refer to previous and next line respectively
-<<<<<<< HEAD
 	\chapter{DB programming}
 	\section{SQL as complete language}
 	\subsection{Persistent Stored Modules}
@@ -566,7 +569,7 @@ delete from customer where customerid = @custno
 print 'The customer has been succesfully deleted.'\end{lstlisting}
 	 A stored procedure is a collection of SQL and control-of-flow commands (program) that is stored as a database object.
 	 \section{cursors}
-	 SQL statements are processing complete resultsets and not individual rows. Cursors allow to process individual rows to preform complex, row specifik operations that can't (easily be preformed with a single SELECT, UPDATE or DELETE statement. It is a datbase object that refers to the result of a query. It allows to specify the row from the resultset you wish to process.
+	 SQL statements are processing complete resultsets and not individual rows. Cursors allow to process individual rows to preform complex, row specific operations that can't (easily be preformed with a single SELECT, UPDATE or DELETE statement. It is a database object that refers to the result of a query. It allows to specify the row from the resultset you wish to process.
 	There are 5 important cursor related statements: 
 	\begin{enumerate}
 		\item \textbf{DECLARE CURSOR} : creates and defines the cursor
@@ -583,12 +586,92 @@ DECLARE <cursor_name> [INSENSITIVE][SCROLL] CURSOR FOR
 		\item \textbf{OPEN} : opens the declared cursor
 		\begin{lstlisting}[language = sql]
 OPEN <cursor_name>\end{lstlisting}
-		\item \textbf{FETCH} : fetches 1 row
-		\item \textbf{CLOSE} : closes the cursor (counterpart to OPEN)
+		\item \textbf{FETCH} : fetches 1 row, default only the NEXT flag is enables, use a SCROLL-able cursor for other ways. The INTO stores the values in variable, if the INTO is not used, the result is displayed on the screen.
+		\begin{lstlisting}[language = sql]
+FETCH [NEXT | PRIOR | FIRST | LAST | {ABSOLUTE | RELATIVE <row number>}]
+FROM <cursor name>
+[INTO <variable name>[,... <last variable name]]	\end{lstlisting}
+		\item \textbf{CLOSE} : closes the cursor (counterpart to OPEN), the definition of the cursor remain, and the cursor can still be reopened
+		\begin{lstlisting}[language = sql]
+CLOSE <cursor name	\end{lstlisting}		
 		\item \textbf{DEALLOCATE} : remove the cursor definition (counterpart to DECLARE)
+		\begin{lstlisting}[language = sql]
+DEALLOCATE <cursor name> \end{lstlisting}		
 	\end{enumerate}
+			\subsection{Update and delete via cursors}
+				Positioned updates/deletions, you can refer to the current row of a cursor by using WHERE CURRENT OF
+		\section{Triggers}
+			A \textbf{trigger} is da database program, consisting of procedural and declarative instructions, saved in the catalogue and activated by the DMBS if a certain action on the database is executed and if a certain condition is satisfied. It is very similar to a SP but it can't be called explicitly, it is always called automatically by the DBMS.
+			\subsection{DML triggers}
+				Can be exetuted by INSERT, UPDATE, DELETE, are activated by BEFORE, INSTEAD OF, AFTER.
+			\subsection{"virtual" tables with triggers}
+				A deleted table contains copies of the updated and deleted rows, during an UPDATE or DELETE the affected rows are moved to the deleted table by a trigger. An inserted table contains copies of the updated or inserted rows, all rows in the inserted table are also in the triggering table. 
+			\subsection{creation of an after trigger}
+				Only a sysadmin or dbo itself can create such a trigger, the trigger can only be linked to 1 table, not to a view. 
+				\begin{lstlisting}[language=sql]
+CREATE TRIGGER naam
+ON tabel
+FOR [INSERT | UPDATE | DELETE]
+AS ... \end{lstlisting}
+				The trigger will then be executed after the execution of the triggering action.
+			\subsection{Triggers and transactions}
+				A trigger is part of the same transaction as the triggering instructions, this means that inside the trigger, the transaction can be rolled back!
+			\subsection{why using triggers?}
+				\begin{itemize}
+					\item validation of data and complex constraints 
+					\item automatic generation of values
+					\item support for alerts
+					\item auditing
+					\item replication and controlled update of redundant data
+				\end{itemize}
+			\subsubsection{advantages}
+				\begin{itemize}
+					\item you are able to store functionality inside the DB, and it wil execute consistently with each update.
+					\item no redundant code 
+					\item written and tested 'once' by an experienced DBA. 
+					\item fits inside the client-server model
+				\end{itemize}
+			\subsubsection{disadvantages}
+				\begin{itemize}
+					\item complexity : DB design and implementation are more complex then an application.
+					\item hidden functionality : the user can be confronted by unexpected side effects from the trigger
+					\item performance : the trigger possibly has to be executed a lot
+					\item portability : restricted to the chosen database dialect.
+				\end{itemize}
+		\section{Procedural database objects}
+			\begin{center}
+				\begin{tabular}{| m{12em} | m{7em} | m{13em} | m{11em} |}
+					\hline
+					\textbf{types} & \textbf{saved as} & \textbf{execution} & \textbf{supports parameters}\\
+					\hline
+					\textbf{script} & seperate file & client tool & no \\
+					\hline
+					\textbf{stored procedure} & database object & via application or SQL script & yes\\
+					\hline
+					\textbf{user defined function} & database object & via application or SQL script & yes\\
+					\hline
+					\textbf{trigger} & database object & via DML statement & no\\
+					\hline
+				\end{tabular}
+			\end{center}
+		\section{Tables and User Defined Types}	
+			These are abstract data types, that can be used as built-in types. We can divide 2 sorts : distinct and structured types. 
+			\subsection{distinct type}
+				These are based on a basic type, it allows to refine existing data types.
+				\begin{lstlisting}[language = sql]
+	CREATE TYPE name FROM <basic_type + refinement>\end{lstlisting}
+				The new type is then stored in the DB and can be used as if it were a built-in type. Once a type is declared, it can not be changed, it can be dropped, but only if there are no tables in the DB that are using it, there is no code that uses it. 
+		\section{dynamic SQL}
+			\subsection{Early Binding vs Late Binding}
+				SQL binding refers to the translation of SQL code to a lower-level representation that can be executed by the DBMS, after preforming tasks such as validation of table and field names checking whether the user or client has enough access rights, and generating a query plan to access the physical data in the most performant way, early and late binding refers to the moment this binding step if performed.
+				\subsubsection{Early Binding}
+					Is possible in case a pre-compiler is used and can hence only be applied with an embedded API, it is beneficial in performance, it only needs to be applied once and a pre-compiler can preform specific syntax checks. 
+				\subsubsection{Late Binding}
+					Preforms the binding of SQL-statements at run time, this adds more flexibility (dynamic SQL), but syntax errors or other issues will remain hidden until the program is executed. It also becomes harder to test the application, it is less efficient for queries that must be executed more then once and there is a bigger risk for SQL injection. 
+			\subsection{SQL injection}
+				You can never trust front-end data, this data always has to be checked because it can be statements that are harmful to the database. You can do this by not allowing certain characters. 
+	\chapter{Indexes and performance}
 \end{document}
-=======
-		
-\end{document}
->>>>>>> 594aa8ffe7ac1c0ef238e1e089c7e455bc917ed8
+
+	
+
