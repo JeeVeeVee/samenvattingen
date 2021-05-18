@@ -688,6 +688,365 @@ AS ... \end{lstlisting}
 		\section{creating indexes}
 			\begin{lstlisting}[language = sql]
 CREATE [UNIQUE] [| NONCLUSTERED] INDEX index_name ON table (kolom[,...])\end{lstlisting}
+
+\chapter{Transactie management}
+\section{Transactions, Recovery and Concurrency Control}
+\begin{itemize}
+    \item set of database operations induced by a single user or application, that should be considered as one undividable unit of work
+    \item Transaction always ‘succeeds’ or ‘fails’ in its entirety
+    \item Transaction renders database from one consistent state into another consistent state
+    \item Examples of problems: hard disk failure, application/DBMS crash, division by 0 ...
+    \item Recovery: activity of ensuring that, whichever of the problems occurred, the database is returned to a consistent state without any data loss afterwards
+    \item Concurrency control: coordination of transactions that execute simultaneously on the same data so that they do not cause inconsistencies in the data because of mutual interference
+    \item Delineating transactions and the transaction lifecycle
+    \item DBMS components involved in transaction management
+    \item logfile
+    \item Transactions boundaries can be specified implicitly
+    or explicitly
+    \begin{itemize}
+        \item Explicitly: begin\_transaction and end\_transaction
+        \item Implicitly: first executable SQL statement
+    \end{itemize}
+    \item Once the first operation is executed, the transaction is active
+    \item If transaction completed successfully, it can be committed. If not, it needs to be rolled back.
+\end{itemize}
+\section{Logfile}
+Logfile registers unique log sequence number, unique transaction identifier, marking to denote the start of a transaction, along with the transaction’s start time and indication whether the transaction is
+read only or read/write, identifiers of the database records involved in the transaction, as
+well as the operation(s) they were subjected to, \textbf{before images} of all records that participated in the transaction, \textbf{after} images of all records that were changed by the transaction, the current state of the transaction (active, committed or aborted)
+\begin{itemize}
+    \item Logfile may also contain checkpoints (moments when buffered updates by active transactions, as present in the database buffer, are written to disk at once)
+    \item Write ahead log strategy
+    \begin{itemize}
+        \item all updates are registered on the logfile before written to disk
+        \item before images are always recorded on the logfile prior to the actual values being overwritten in the physical database files
+    \end{itemize}
+\end{itemize}
+\section{Recovery}
+\subsection{Types of Failures}
+\begin{itemize}
+    \item \textbf{transaction} failure results from an error in the logic that drives the transaction’s
+    operations and/or in the application logic 
+    \item \textbf{System failure} occurs if the operating system or the database system crashes
+    \item \textbf{Media failure} occurs if the secondary storage is damaged or inaccessible
+\end{itemize}
+\subsection{System Recovery}
+\begin{itemize}
+    \item In case of system failure, 2 types of transactions
+    \begin{itemize}
+        \item already reached the committed state before failure
+        \item still in an active state
+    \end{itemize}
+    \item Logfile is essential to take account of which updates  were made by which transactions (and when) and to  keep track of before images and after images needed for the UNDO and REDO
+    \item Database buffer flushing strategy has impact on UNDO and REDO
+\end{itemize}
+\subsection{Media Recovery}
+\begin{itemize}
+    \item Media recovery is invariably based on some type of data redundancy
+    \item Tradeoff between cost to maintain the redundant data and time needed to restore the system
+    \item Two types: disk mirroring and archiving
+    \begin{itemize}
+        \item \textbf{Disk mirroring}: a (near) real time approach that writes the same data
+        simultaneously to 2 or more physical disks, limited failover time but often costlier than archiving, (limited) negative impact on write performance but opportunities for parallel read access
+        \item \textbf{Archiving}: database files are periodically copied to other storage media (e.g. tape, hard disk), trade-off between cost of more frequent backups and cost of
+        lost data, full versus incremental backup
+        \item \textbf{Mixed approach: rollfoward recovery}: Archive database files and mirror logfile such that the backup data can be complemented with (a redo of) the more recent transactions as recorded in the logfile
+        \item Note: NoSQL databases allow for temporary inconsistency, in return for increased performance (eventual consistency)
+    \end{itemize}
+\end{itemize}
+\section{Concurrency Control}
+\begin{itemize}
+    \item Scheduler is responsible for planning the execution of transactions and their operations
+    \item Simple serial execution would be very inefficient
+    \item Scheduler will ensure that operations of the transactions can be executed in an interleaved way
+    \item Interference problems could occur: lost update problem, uncommitted dependency problem and inconsistent analysis problem
+    
+    \medskip
+    
+    \begin{itemize}
+        \item \textbf{Lost update} problem occurs if an otherwise successful update of a data item by a transaction is overwritten by another transaction that wasn’t ‘aware’ of the first update
+        \item If a transaction reads one or more data items that are being updated by another, as yet uncommitted, transaction, we may run into the \textbf{uncommitted dependency}/\textbf{dirty read} problem
+        \item The \textbf{inconsistent analysis} problem denotes a situation where a transaction reads partial results of another transaction that simultaneously interacts with (and updates) the same data items.
+        \item \textbf{nonrepeatable read (unrepeatable read)} occurs when a transaction T1 reads the same row multiple times, but obtains different subsequent values, because another transaction T2 updated this row in the meantime
+        \item \textbf{phantom reads } can occur when a transaction T2 is executing insert or delete operations on a set of rows that are being read by a transaction T1
+    \end{itemize}
+\end{itemize}
+\section{Schedules and Serial Schedules}
+\begin{itemize}
+    \item \textbf{Schedule} S is serial if all statements si of the same transaction T are scheduled
+    consecutively, without any interleave with statements from a different transaction
+    \item Serial schedules prevent parallel transaction execution
+    \item We need a non-serial, correct schedule!
+    \item A \textbf{serializable} schedule is a non-serial schedule which is equivalent to a serial schedule
+    \item A precedence graph can be drawn to test a schedule for serializability. If precedence graph contains a cycle, the schedule is not serializable.
+    \item Scheduler applies scheduling protocol:
+    \begin{itemize}
+        \item Optimistic protocol
+        \begin{itemize}
+            \item conflicts between simultaneous transactions are exceptional
+            \item transaction’s operations are scheduled without delay
+            \item when transaction is ready to commit, it is verified for conflicts
+            \item if no conflicts, transaction is committed. Otherwise, rolled back.
+        \end{itemize}
+        \item Pessimistic protocol
+        \begin{itemize}
+            \item it is likely that transactions will interfere and cause conflicts
+            \item execution of transaction’s operations delayed until scheduler can schedule them in such a way that chance of conflicts is minimized
+            \item will reduce the throughput to some extent
+        \end{itemize}
+    \end{itemize}
+    \item Locking can be used for optimistic and pessimistic scheduling
+    \begin{itemize}
+        \item Pessimistic scheduling: locking used to limit the simultaneity of transaction execution
+        \item Optimistic scheduling: locks used to detect conflicts during transaction execution
+    \end{itemize}
+    \item Timestamping
+    \begin{itemize}
+        \item Read and write timestamps are attributes associated with a database object
+        \item Timestamps are used to enforce that a set of transactions’ operations is executed in the appropriate order
+    \end{itemize}
+\end{itemize}
+
+\section{Locking and Locking Protocols}
+\begin{itemize}
+    \item Purpose of locking is to ensure that, in situations where different concurrent transactions attempt to access the  same database object, access is only granted in such a way that no conflicts can occur
+    \item A lock is a variable that is associated with a database object, where the variable’s value constrains the types of operations ththat are allowed to be executed on the object at that time
+    \item Lock manager is responsible for granting locks (locking) and releasing locks (unlocking) by applying a locking protocol
+    \item \textbf{An exclusive lock} (x-lock or write lock) means that a single transaction acquires the sole privilege to interact with that specific database object at that time (no other transactions are allowed to read or write it)
+    \item A {shared lock} (s-lock or read lock) guarantees that no other transactions will update that same object for as long as the lock is held (other transactions may hold a shared lock on that same object as well, however they are only allowed to read it)
+    \item If a transaction wants to update an object, an exclusive lock is required (only acquired if no other transactions hold any lock on the object)
+    \item Compatibility matrix \ref{fig:Compatibility-matrix}
+    \begin{figure}
+        \includegraphics[width=250pt]{./images/Compatibility-matrix.png}
+        \caption{\label{fig:Compatibility-matrix}Compatibility matrix}
+    \end{figure}
+    \item Lock manager implements locking protocol (set of rules to determine what locks can be granted in what situation (based on e.g. compatibility matrix ))
+    \item Lock manager also uses a lock table (which locks are currently held by which transaction, which transactions are waiting to acquire certain locks, etc.)
+    \item Lock manager needs to ensure ‘fairness’ of transaction scheduling to, e.g., avoid starvation        
+\end{itemize}
+\subsubsection{Two-Phase Locking Protocol (2PL)}
+\begin{itemize}
+    \item Before a transaction can read (update) a database object, it should acquire a shared (exclusive) lock on that object
+    \item Lock manager determines if requested locks can be granted, based on compatibility matrix
+    \item Acquiring and releasing locks occurs in 2 phases
+    \begin{itemize}
+        \item growth phase: locks can be acquired but no locks can be released
+        \item shrink phase: locks are gradually released, and no additional locks can be acquired
+    \end{itemize}
+    \item Variants: Rigorous 2PL: transaction holds all its locks until it is committed \&\& Static 2PL (Conservative 2PL): transaction acquires all its locks right at the start of the transaction
+    \item Two-Phase Locking Protocol \ref{fig:2PL}
+    \item Lost update problem with locking \& Uncommitted dependency problem with locking
+    \item Revisit the uncommitted dependency problem
+    \begin{itemize}
+        \item problem is resolved if T2 holds all its locks until it is rolled back
+        \item with 2PL protocol, locks can already be released before the transaction commits or aborts (shrink phase)
+    \end{itemize}
+    \item Cascading Rollback should be applied recursively
+    \item \textrightarrow best way to avoid this, is for all transactions to hold their locks until they have reached the ‘committed’ state (e.g., rigorous 2PL)
+\end{itemize}
+\begin{figure}
+    \includegraphics[width=300pt]{./images/2PL.png}
+    \caption{\label{fig:2PL}Two-Phase Locking Protocol}
+\end{figure}
+\subsection{Dealing with Deadlocks}
+\begin{itemize}
+    \item A deadlock occurs if 2 or more transactions are waiting for one another’s’ locks to be released
+    \item Deadlock prevention can be achieved by static 2PL (transaction must acquire all its locks upon the start)
+    \item Detection and resolution
+    \begin{itemize}
+        \item wait for graph consisting of nodes representing active transactions and directed edges Ti  \textrightarrow Tj for each transaction Ti that is waiting to acquire a lock currently held by transaction Tj
+        \item deadlock exists if the wait for graph contains a cycle
+        \item victim selection
+    \end{itemize}
+\end{itemize}
+\subsection{Isolation Levels}
+\begin{itemize}
+    \item Level of transaction isolation offered by 2PL may be too stringent
+    \item Limited amount of interference may be acceptable for better throughput
+    \item Long-term lock is granted and released according to a protocol, and is held for a longer time, until the transaction is committed
+    \item A short-term lock is only held during the time interval needed to complete the associated operation
+    \item \textrightarrow use of short-term locks violates rule 3 of the 2PL protocol \& can be used to improve throughput!
+    \item \textbf{Read uncommitted}
+    \item \textbf{Read committed}
+    \item \textbf{Repeatable read}
+    \item \textbf{Serializable}        
+\end{itemize}
+Isolation Levels \ref{fig:isolation-levels}
+\begin{figure}
+    \includegraphics[width=\textwidth]{./images/isolation-levels.png}
+    \caption{\label{fig:isolation-levels}Isolation Levels}
+\end{figure}
+\section{Lock Granularity}
+\begin{itemize}
+    \item Database object for locking can be a tuple, a column, a table, a tablespace, a disk block, etc.
+    \item Trade-off between locking overhead and transaction throughput
+    \item Many DBMSs provide the option to have the optimal granularity level determined by the database system
+\end{itemize}
+\section{ACID Properties of Transactions}
+\begin{itemize}
+    \item ACID stands for Atomicity, Consistency, Isolation and Durability
+    \item \textbf{Atomicity} guarantees that multiple database operations that alter the database state can be treated as one indivisible unit of work
+    \item \textbf{Consistency} refers to the fact that a transaction, if executed in isolation, renders the database from one consistent state into another consistent state
+    \item \textbf{Isolation} denotes that, in situations where multiple transactions are executed concurrently, the outcome should be the same as if every transaction were executed in isolation
+    \item \textbf{Durability} refers to the fact that the effects of a
+    committed transaction should always be persisted into
+    the database
+\end{itemize}
+\chapter{Datawarehousing \& Business Intelligence}
+Knowledge piramid \ref{fig:knowledge-piramid}
+\begin{figure}
+    \includegraphics[width=250pt]{./images/knowledge-piramid.png}
+    \caption{\label{fig:knowledge-piramid}Knowledge piramid}
+\end{figure}
+Business Intelligence (BI): Business intelligence, or BI, is a blanket term for technology that helps companies organize and query their data to help them improve operations and make more money.
+
+Drivers for increasing use of BI: Digitalisation(ERP, CRM), Connectors between BI software and Business software, Data overflow, Complexity and Speed of change in the Business Environment, Reduce inefficiencies, inaccuracies, Decreasing Cost
+
+Datawarehouse: A data warehouse is an integrated, subject oriented, time
+variant and non volatile collection of data to support decisions
+taken on management level.
+
+\subsection{Properties:}
+\begin{itemize}
+    \item Subject oriented
+    \item Integrated
+    \item Time
+    \item Non volatile
+    \item Aggregated data
+\end{itemize}
+
+\subsection{Goals of DWH:}
+\begin{itemize}
+    \item Reporting
+    \item Analysis of events in the past or actual events
+    \item Predictions based on trend analysis
+    \item Multidimensional reporting
+    \item Empowerment of end user by offering simplified reporting tools (cf. SQL: only specialist can write SQL)
+    \item Data mining
+\end{itemize}
+
+\section{Advantages}
+\begin{itemize}
+    \item High ROI (return on investment)
+    \item Competitive advantage (Decision makers get access to data that was not available, unknown or unused before.)
+    \item Increased productivity of corporate decision-makers
+    \begin{itemize}
+        \item Decision makers get one consistent view on the enterprise
+        \item Decision makers can make more substantial, more accurate and more consistent analysis
+    \end{itemize}
+\end{itemize}
+
+\section{Architecture}
+DWH components \ref{fig:dwh-components}
+\begin{figure}
+    \includegraphics[width=250pt]{./images/dwh-components.png}
+    \caption{\label{fig:dwh-components}DWH components}
+\end{figure}
+Read in slides
+
+\section{Datamart}
+A DB existing of a subset of company data to support the needs of a particular business unit for data analysis, or, to support users sharing the same needs for analyzing business processes.
+
+Why a data mart?
+\begin{itemize}
+    \item To give users access to the data they analyse most frequently
+    \item To offer data in a way that corresponds to the collective view of a group of users in a department or a group of users in the same business process
+    \item To improve response time by offering lower data volumes
+    \item To offer data in a format that fits the tools used by end users (OLAP, datamining tools)
+    \item Reduction of complexity in the ETL process
+    \item Reduction of cost as opposed to the setup of a complete DWH
+\end{itemize}
+\section{Data Mining Applications}
+\begin{itemize}
+    \item Perform what-if analyses
+    \item Perform predictions ("predictive analysis")
+    \item Facilitate the decision process
+\end{itemize}
+\section{Problems associated with DWH}
+\begin{itemize}
+    \item Underestimation of resources (costs) for ETL
+    \item Hidden problems with source systems
+    \item Required data not captured
+    \item Increased end-user demands
+    \item Data homogenization
+    \item Need for concurrent support of several (historical) versions
+    \item High demand for resources
+    \item Data ownership
+    \item High maintenance
+    \item Long projects
+    \item DWH creates expectation of user ‘empowering’: Make own reports, analyses
+    \item Complexity of integration
+    \item Complex change and version management
+    \item \textrightarrow Night might be too short for ETL
+\end{itemize}
+\subsection{Problems with Operational data}
+Dirty data, Missing values, Inconsistent data, Data not integrated, Wrong format, Too fine, Not fine enough, Too much data, Too many attributes, Too much volume
+
+\section{Design}
+\begin{itemize}
+    \item Inmo
+    \begin{itemize}
+        \item Creation of a data model based on all data of the organisation
+        \item Enterprise Data Warehouse (EDW)
+        \item Used to distil data marts for each department
+        \item Uses traditional methods for describing EDW
+    \end{itemize}
+    \item Kimball
+    \begin{itemize}
+        \item Starts by identifying the information requirements (referred to as analytical themes) and associated business processes of the enterprise \textrightarrow Data Warehouse Bus Matrix; 
+    \end{itemize}
+\end{itemize}
+
+\subsection{Star schema}
+A Star schema is a logical structure that 
+has a fact table (containing factual data) in the center, surrounded by denormalized dimension tables containing reference data).
+\begin{itemize}
+    \item Fact table contains data about facts (E.g. factual data about sales of property: sales price, commission percentage)
+    \item Dimension table contains reference informat (property data (address, etc), buyer, owner)
+    \item Facts are generated by events that happened (e.g. a sale)
+    \item Most probably facts never change
+\end{itemize}
+\subsection{Snowflake schema}
+Snowflake schema is a variant of the star schema that has a fact table in the centre, surrounded by normalised dimension tables.
+
+\subsection{Specific Schema Issues}
+\begin{itemize}
+    \item Surrogate keys
+    \begin{itemize}
+        \item StoreKey, ProductKey, ShipperKey \textrightarrow Meaningless integers
+        \item Cannot use business keys since they usually have a business meaning
+        \item Surrogate keys essentially buffer the data warehouse from the operational environment
+        \item Business keys are usually bigger in size \& also often re-used over longer periods of time
+    \end{itemize}
+    \item Granularity of the fact table
+    \begin{itemize}
+        \item Level of detail of one row of the fact able
+        \item Higher (lower) granularity implies more (fewer) rows
+        \item Trade-off between level of detailed analysis and storage requirements
+        \item example: One tuple of the fact table corresponds to one line on a purchase order
+    \end{itemize}
+\end{itemize}
+\subsubsection{Factless Fact Tables}
+\subsubsection{Optimizing the dimension tables}
+Dimension tables should be heavily indexed to improve query execution time. average between 5 and 10 indexes. \textbf{time}: TimeKey, Date, DayOfWeek, DayOfMonth, DayOfYear
+
+Junk Dimensions: Deal with low cardinality attribute types such as flags or indicators. Eg. On-line Purchase (Y/N), Payment (cash or credit-card), Discount (Y/N)
+
+Outrigger tables: Store a set of attribute types of a dimension table which are highly correlated, low in cardinality and updated simultaneously.
+
+Slowly Changing Dimensions \& Rapidly changing dimensions
+
+\section{Advantages of the dimensional model}
+\begin{itemize}
+    \item Efficiency
+    \item Ability to handle changing requirements
+    \item The model can easily adapt to changing needs because each dimension is equivalent to the fact table
+    \item Extensibility
+    \item Ability to model common business situations
+    \item Predictable query processing
+\end{itemize}
+
+
 \end{document}
 
 	
