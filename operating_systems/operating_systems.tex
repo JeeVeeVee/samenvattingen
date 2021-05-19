@@ -288,5 +288,79 @@
    				Er bestaan algoritmes om cycles in een graaf te vinden. daarna kan je (zie volgende titel xoxo)
    			\subsection{Deadlock herstellen}
    				1 van de processen moet worden stopgezet via KILL, je geeft dus de bron vrij ten koste van een proces, vervolgens vindt er een rollback plaats op het proces, zodat die alsnog wordt uitgevoerd. 
+   	\chapter{File Systems}
+   		\section{Persistente Opslag}
+   			Processen maak gebruik van persistentie bijvoorbeeld wanneer ze data bewaren na het afsluiten van een proces, of als ze data willen delen met andere processen. Zoals je weet halen processen de data en de instructies die ze nodig hebben uit het RAM geheugen. RAM is echter beperkt in capaciteit. 
+   			\subsection{Hard Disk Drive (HDD)}
+   				Een HDD is een magnetisch opslagmedium dat een grote opslagcapaciteit biedt voor een lage prijs. Een HDD werkt met draaiende schijven, daardoor is er telkens een kleine vertraging \textbf{seek time} wanneer de leeskop zich beweegt naar de gevraagde data.
+   			\subsection{Solid State Drive (SSD)}
+   				Een SSD is sneller maar duurder dan een HDD. Het heeft geen draaiende onderdelen, maar maakt gebruik van circuits (IC's), waardoor de schijf robuuster is en geen seek time nodig heeft. 
+   			\subsection{CD/DVD}
+   				CD's en DVD's zijn optische opslagmedia, ze zijn beperkt in performantie en vaak read-only. Ze worden dan ook vaker gebruikt als distributiemedia of back-ups. 
+   			\subsection{USB stick}
+   				Deze maken ook gebruik van IC's, ze zijn echter externe opslagmedia dei worden aangesloten, hierdoor hebben ze beperkte capaciteit en performantie. 
+   		\section{Files}
+   			Een fysiek opslagmedium is onderverdeeld in blokken, een \textbf{file} (bestand) groepeert data  uit 1 of meerdere blokken. Het is dus een abstracte eenheid die de complexiteit van de fysieke opslag verbergt. De implementatie van files gebeurt door een \textbf{file system}. De gebruiker krijgt de file te zien als een opeenvolging van bytes, dit is dus een abstractie, in realiteit zijn die bytes verspreid over verschillende blokken die niet noodzakelijk aansluiten?
+   			Een file heeft : 
+   			\begin{itemize}
+   				\item een naam, eventueel gevolgd door een extentie
+   				\item een huidige en een maximale grootte 
+   				\item toegangsrechten 
+   				\item een datum van aanmaak en van laatste aanpassing 
+   				\item een verwijzing naar de blokken waar de bytes van het bestand zijn opgeslagen. 
+   			\end{itemize}
+   		
+	   		Binnen UNIX geld de regel \textit{"Everything is a file"}, dit houdt in dat zowel directories, links, speciale bestanden, sockets en pipes worden gezien als een file. \\
+	   		Je kan bytes uitlezen op 2 verschillende manieren : 
+	   		\begin{itemize}
+	   			\item \textbf{sequentieel}, dan worden de bytes in volgorde uitgelezen, wat inhoud dat al je byte 100 wil lezen je dus ook bytes 1 - 99 moet lezen.
+	   			\item \textbf{Random Access}, dan worden de bytes uitgelezen in willekeurige volgorde, wat inhoud dat je meteen naar byte 100 kan gaan als je dat zou willen. 
+	   		\end{itemize}
+   		\section{Directories}
+   			Een directory groepeert bestanden, en andere directories, het creërt hierdoor een hiërarchische structuur. De implementatie gebeurt door het file system, elke file heeft dan zowel een absoluut (vertrekkende vanaf de root), en een relatief (vertrekkende vanuit de huidige locatie) pad. 
+   		\section{File systems}
+   			Een \textbf{file system} (bestandssystem) is een onderdeel van het besturingssysteem, ze beheren de fysieke opslagruimte en implementeren files en directories. Het is mogelijk voor een besturingssysteem om meerdere file system (tegelijk) te ondersteunen. 
+   			\\
+   			Er zijn verschillende implementaties voor files: 
+   			\begin{itemize}
+   				\item \textbf{Contiguous storage}, hierbij wordt elk bestand in 1 of meerdere aansluitende blokken opgeslagen. Deze eenvoudige methode geeft een goede leessnelheid en ondersteunt random access. De nadelen echter zijn dat als een bestand groeit, dat het eventueel moet worden verplaatst. en dat als een bestand wordt verwijderd, de vrije ruimte wordt ingenomen door een kleiner bestand waardoor er \textbf{fragmentatie} ontstaat. We vinden deze implementatie vaak terug op CD's en DVD's. 
+   				\item  \textbf{linked lists}, hierbij hoeven de datablokken van een bestaand bestand niet aan te sluiten, aangezien elke blok een verwijzing bijhoudt naar het volgende blok. Hierdoor is er geen risico op fragmentatie, maar dat gaat ten koste van een goede performantie. Er is ook geen ondersteuning voor random access. 
+   				\item \textbf{File Allocation Table (FAT)}, dit is een verbetering van de linked list techniek. De datablokken vormen nog steeds een linked list, maar alle verwijzingen tussen de blokken worden samengebracht in 1 tabel. Door deze tabel te bewaren in het RAM, verhoog je de leessnelheid en maak je random access mogelijk. Het nadeel hier is dat je een hoog RAM-verbruik kan hebben.
+   				\item \textbf{index nodes (inodes)}, een inode is een datastructuur die zowel de metadata van een bestand als verwijzingen naar de datablokken bevat. Een bestandssysteem dat inodes gebruikt hoeft enkel de inodes van de geopende bestanden in het RAM te bewaren. Hierdoor kan deze techniek een goede leesbaarheid combineren met een beperkt RAM-verbruik. 
+   			\end{itemize}
+   			Ook de directories kan worden opgeslaan als een file, die file heeft dan 1 entry per subdirectory of file.
+   			\\
+   			Meeste file systems ondersteunen ook links, een link verwijst naar een ander bestand, ze bestaan in 2 vormen : 
+   			\begin{enumerate}
+   				\item een \textbf{hardlink} waarbij de datablokken / inodes worden gedeeld
+   				\item een \textbf{soft link} waarbij de link een eigen datablok of inode heeft. 
+   			\end{enumerate}
+   			\subsection{Virtual file systems (VFS)}
+   				Op windows krijgt elk bestandssysteem een drive letter(C, D), linux en mac hebben een virtual file system, dat alle bestandssystemen presenteert als 1 hiërarchische structuur. De processen maken dan gebruik van de algemene functies van het OS om het virtual file system aan te spreken, deze functies zijn dus NIET gebonden aan een specifiek file system. Het virtual file system vertaalt vervolgens deze algemene functieoproepen naar specifieke voor elk file systeem. Het inladen van een bestandssysteem binnen de VFS-hiërarchie heet een \textbf{mount} bewerking. Het uitladen is logischerwijs \textbf{unmount}.
+   		\section{Partities}
+   			Een fysiek opslagmedium kan zijn capaciteit onderverdelen in partities, elke partitie heeft zijn eigen bestandssysteem. Het opslagmedium voorziet een partitietabel die info bevat over de partities en hun bestandssysteem.
+   			\\
+   			\textbf{windows file systems : }
+   			\begin{itemize}
+   				\item NFTS : New Technology File System, maakt gebruik van journaling
+   				\item FAT32 : File Allocation Table, gebruikt 32-bit addressering
+   				\item exFAT : extensible File Allocation Table, gericht op USB en SD-kaarten, maakt gebruik van file allocation table, maar geen journaling
+   			\end{itemize}
+   			\textbf{mac: }
+   			\begin{itemize}
+   				\item HFS+ : 
+   				\item ADFS
+   			\end{itemize}
+   			\textbf{linux : }
+   			\begin{itemize}
+   				\item ext4
+   				\item ZFS
+   				\item Btrfs
+   			\end{itemize}
+   			\textbf{andere :}
+   			\begin{itemize}
+   				\item ISO 9660 /UDF
+   			\end{itemize}
+   	
    			
 \end{document}
