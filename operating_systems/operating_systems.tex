@@ -348,19 +348,67 @@
    			\end{itemize}
    			\textbf{mac: }
    			\begin{itemize}
-   				\item HFS+ : 
-   				\item ADFS
+   				\item HFS+ : Hierarchical File System +, gebruikt journaling, is verouderd
+   				\item ADFS : Apple File System, focus op SSD en encryptie
    			\end{itemize}
    			\textbf{linux : }
    			\begin{itemize}
-   				\item ext4
-   				\item ZFS
-   				\item Btrfs
+   				\item ext4 : fourth extended file system, gebruitk journaling
+   				\item ZFS : zettabyte file system, heeeeeel geavanceerd
+   				\item Btrfs : Better File system, antwoord op ZFS van oracle, op fedora
    			\end{itemize}
    			\textbf{andere :}
    			\begin{itemize}
-   				\item ISO 9660 /UDF
+   				\item ISO 9660 /UDF : voor optische schijven, gericht op write once-media
    			\end{itemize}
-   	
+   	\chapter{Threads}
+   		\section{Wat zijn threads}
+   			Tot nu waren processen altijd atomair, het kon verschillende toestanden hebben via de scheduler, en toegang vragen tot rekenkracht of bestanden. We kunnen een proces echter opsplitsen in 2 concepten : 
+   			\begin{itemize}
+   				\item \textbf{Eigendom van bronnen} : het besturingssysteem dat er voor zorgt dat de processen elkaar bronnen niet zomaar beïnvloeden
+   				\item \textbf{uitvoeren van instructies} : hiervoor wordt gebruik gemaakt van de Program Counter om de volgende instructie uit te voeren, en info bij te houden
+   			\end{itemize}
+   			Deze concepten staan eigenlijk los van elkaar
+   			\subsection{proces : eigendom bronnen}
+   				Elk proces krijgt controler of eigenaarschap over bronnen (locking). Hierdoor worden de bronnen afgeschermd door andere processen. Het uitvoeren van een proces volgt de fetch-execute cyclus voor het uitvoeren van de instructies.\\
+   			\subsection{ threads}
+   				Het Verschil tussen processen en threads, is dat een thread het uitvoeringsgedeelte van een proces is en dus niet op zichzelf kan bestaan. Binnen een proces kunnen er meerdere threads tegelijkertijd bestaan, die processen zijn dan \textbf{multi-threaded}. Een Thread bestaat uit : 
+   				\begin{itemize}
+   					\item thread ID
+   					\item registers
+   					\item stack 
+   					\item toestand
+   				\end{itemize}
+				Threads binnen hetzelfde proces, delen de instructies, data en toegang tot bronnen. 
+		\section{Soorten Threads}
+   			\subsection{User-Level Threads}
+   				Het OS beschouwt het programma als single-threaded proces, maar het programma maakt gebruik van een bibliotheek voor threading. De voordelen zijn dan de er geen system calls nodig zijn van het OS voor de threading (waardoor het sneller is), het proces heeft zelf geen controle over de scheduling threads, en je bent onafhankelijk van het OS (JVM). De nadelen echter zijn dat als de thread blokkeert op I/O, het hele proces wordt geblokkeerd, en er is geen gebruik van multiprocessing. 
+   			\subsection{Kernel-Level Threads}
+   				De logica voor deze threads zit in het OS, de voordelen hiervan zijn dat scheduling mogelijk is op threadniveau, dat het blokkeren van 1 thread geen invloed heeft op andere threads, mulitprocessing mogelijk is en dat het OS zelf ook threads gebruikt. Het nadeel is dat het trager is. 
+   		\section{voor en nadelen}
+   			\subsection{voordelen van multithreading}
+   				\begin{itemize}
+   					\item niet noodzakelijk om het hele proces te blokkeren 
+   					\item eenvoudiger om bronnen te dleen 
+   					\item lichter en sneller dan processen 
+   					\item efficient gebruik van multi-core CPU's (parallellisme)
+   				\end{itemize}
+   			\subsection{uitdaingen bij multithreading}
+   				\begin{itemize}
+   					\item indelen van het rekenwerk in mogelijke threads
+   					\item opsplitsen van data over de threads
+   					\item afhankelijkheid van de data tussen threads
+   					\item testen en debuggen
+   				\end{itemize}
+   		\section{Parallellisme}
+   			\subsection{Soorten parallellisme}
+   				Bij Parallellisme gaan we taken opsplitsen in verschillende subtaken, die onafhankelijk van elkaar uitgevoerd worden. Dit kan op verschillende manieren
+   				\subsubsection{data parallellisme}
+   					De te verwerken data wordt opgesplitst in stukken, op elk stuk wordt vervolgens dezeldfe ebwerking uitgevoerd. 
+   				\subsubsection{taken parallellisme}
+   					Taken parallellims verdeelt het werk op in verschillende threads, niet elke thread voert dezelfde operatie uit. 
+   		\section{Amdahl's law}
+   			De Wet van Amdahl is een manier op een theoretische schattin te maken hoe het toeveogen van cpu cores de uitvoering van een programma versneld. 
+   			\[snelheidswinst = \frac{1}{S + \frac{1 - S}{N}}\]
    			
 \end{document}
