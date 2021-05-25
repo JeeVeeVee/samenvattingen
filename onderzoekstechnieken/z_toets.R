@@ -10,7 +10,7 @@ m0 <- 3.3       #hypothetisch populatiegemiddelde (H0)
 
 #methode 1
 #bereken de kans dat in een steekproef het gegeven steekproefgemiddelde ziet, dus P(M > sm), in een verdeling M ~ Nor(m0, s / sqrt(n))
-p <- 1 - pnorm(sm, mean = 3.3, s/sqrt(n)) # => 0.0341...
+p <- 1 - pnorm(sm, mean = m0, s/sqrt(n)) # => 0.0341...
 
 #als deze kans kleiner is dan het significantieniveau, dan kunnen we de nulhypothese verwerpen
 

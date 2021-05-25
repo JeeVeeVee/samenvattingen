@@ -1,0 +1,1 @@
+gewichtstoename <- read.csv('datasets/santa.txt', sep = "")

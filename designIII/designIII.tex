@@ -110,4 +110,60 @@
 		\end{center}
 	\chapter{Proxy} 
 		It is a structural design pattern, it allows you to replace another object, it will give or deny you control over that object. 
+		\section{Remote Proxy}
+			A remote proxy acts as a local representation of a remote object. The original object runs in a different JVM. The proxy contains a set of local methods which can be called and which are then transferred to the remote object. 
+			\subsection{RMI (Remote Method Invocation)}
+				By adding a client helper and a service helper, the client will feel like he is interacting with the real deal, while in fact the client helper is a proxy which acts as a real thing, but transfers all operations to the original object. \\
+				The following steps are taken when an method is called:
+				\begin{enumerate}
+					\item The client object calls the method doBigThing() of the client helper object
+					\item The client helper object wraps all the info and transfers it over the network to the service helper.
+					\item The service helper now needs to unwrap the info and can call the real method on the real service object.
+					\item The service object does al the work and returns the result to the service helper.
+					\item The service helper wraps all the results and sends it over the network to the client helper
+					\item the client helper now unwraps the result and returns it to the client object who doesn't know what just happend
+				\end{enumerate}
+			\begin{center}
+				\includegraphics[scale=0.4]{remote_proxy}
+			\end{center}
+		\section{Virtual proxy}
+			A virtual proxy represents an object that is way too expensive to create. the proxy acts as a surrogate for the object when created. Other methods are delegated to the realSubject.
+			\subsection{Protection}
+				We can use Java's proxy API to add protection. Instead of the proxy having a reference to RealSubject, he now has a reference to InvocationHandler, which does have a reference to RealSubject. The proxy now exists out of 2 classes. The invocationHandler is now in charge of restricting access to the realsubject. This is different from a decorator as a decorator adds behaviour to an object, where proxy controls access.
+	\chapter{Singleton}
+		Sometimes we have objects of which only 1 instance is needed/wanted. A singleton guarantees one and only instance of a class exits in you program. It serves as a global access to the instance and is created as needed.
+		\begin{lstlisting}[language = java]
+public class Singelton{
+	private static final Singleton uniqueInstance = new Singleton();
+	
+	//nuttige variabelen
+	
+	private Sinlgeton(){
+	}
+	
+	public static Singleton getInstance(){
+		return uniqueInstance;
+	}
+}\end{lstlisting}
+		\section{lazy loading}
+			Lazy loading is a design pattern commonly used in computer programming to defer initialization of an object until the point at which it is needed. It can contribute to efficiency in the program's operation if properly and appopriately used. The opposite is called eager loading. You can make an Singleton lazy by adding some code to the getInstance method.
+			\begin{lstlisting}[language = java]
+public class Singelton{
+private static final Singleton uniqueInstance;
+
+//nuttige variabelen
+
+private Sinlgeton(){
+}
+
+public static Singleton getInstance(){
+	if(uniqueInstance = null){
+		uniqueInstance = new Singleton
+	}
+	return uniqueInstance;
+}\end{lstlisting}
+			\section{Multithreading}
+				When using lazy loading, in combination with multithreading, it is possible that there will be more then 1 instance of the Singleton. It is safer to then work with eager loading (= creating an instance when the class is loaded). 
+				If you still want to use lazy loading, you will have to make the getInstance() method synchronized, this will possibly reduce performace a lot!!!
+		
 \end{document}

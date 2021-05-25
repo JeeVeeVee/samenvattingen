@@ -9,7 +9,7 @@ m0 <- 3.3       #hypothetisch populatiegemiddelde (H0)
 
 #methode 1 : KRITIEKE GRENSGEBIED
 
-g <- m0 + qt(1 - a, df = n- 1) * ss / sqrt(n)
+    g <- m0 + qt(1 - a, df = n- 1) * ss / sqrt(n)
 
 # als sm groter is dan g, dan kunnen de H0 verwerpen 
 
