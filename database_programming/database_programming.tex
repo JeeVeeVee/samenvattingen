@@ -71,8 +71,7 @@
 				this can be imprecise data, vague data, uncertain data, missing data
 			\subsection{Some other V's}
 				\begin{itemize}
-					\item \textbf{Virality} : how long do we need to 
-		qqsdfqsdfqdfqdsf			
+					\item \textbf{Virality} : how long do we need to 			
 					keep data
 					\item \textbf{Viscosity} : is the data big enough so that it is statistically relevant?
 					\item \textbf{Visualisation} : can the results easily be presented.
@@ -94,8 +93,6 @@
 			\item horizontal scaling which means you increase the amount of servers in a cluster. this makes it a lot harder for relational databases, but it is cheaper and in theory infinite.
 		\end{enumerate}
 		NoSQL databases are databases that store and manipulate data, in other formats than tabular relations, they aim at near linear horizontal scalablity by distributing their data over a cluster of database nodes for the sake of performance as well as scalabilty. their view on consistency is that the data wil become consistent at some point after each transaction.
-		\\
-		\\
 		SQL is very old, which means it is very mature, that is why it is easier to switch between SQL databases then between NoSQL servers, each NoSQL has unique aspects.
 		\subsubsection{Impedence mismatch}
 			This occurs when cohesive structures of objects in memory, created by software can't be cast to the tables of a (relational) database.
@@ -117,8 +114,7 @@
 				Problems with consistent hashing are, that when 2 servers are hashed close to each other, one of them won't have a lot of case, and when a new server is added, all the keys that are moved to the new server originate from the same server. We can solve this by mapping a server to not one but many points on the ring, which we call \textbf{replicas}.
 			\subsection{eventual consistency}
 				The membership protocol does not guarantee that every node is aware of every other node at all times. The state of the network might not be perfectly consistent at any moment in time, but it wil become consistent in the future. That is why a lot of NoSQL databases guarantee so called \textbf{eventual consistency}.
-				\\
-				\\
+
 				Most NoSQL databases follow the BASE principle : 
 				\begin{itemize}
 					\item Basically Available : see CAP
@@ -153,6 +149,155 @@
 		A column oriented DBMS stores data tables as sections of columns of data, this is usefull if aggregates are regularly computed over large numbers of similar data items and if the data is \textbf{sparse} (a lot of null values). this can be combined with key-value or document store.
 		These databases exist because row-based databases are not efficient at preforming operations that apply to the entire data set, they need indexes which add overhead. Retrieving all attributes pertaining to a single entity becomes less efficient and join operations will be slowed down.
 	\chapter{Types of NoSQL databases : graph databases}
-		
-		
+		Graph databases are gaining a lot of interest, they can give very powerful data modeling tools that provide a close fit to how certain data works irl.  The graphs that the database represent will often be a mathemetical, directed graph.
+		\subsection{what is it}
+			It is a database engine that models both nodes and edges in the relational graph as first-class entities. They are often schema-less, allowing for a lot of flexibility, although they also support relationships. They also allow for minimal routes between nodes and discovering connections that would be hard to find in other databases.
+		\subsection{when to use it}
+			It depends on your data model, if it is \textbf{highly relational}, graph databases are likely a good fit. Also a lot of\textbf{ Many-To-Many relationships} may suggest that a graph database will work better then a relational database.
+
+	\chapter{SQL Server : advanced performance}
+		SQL Server uses random acces files, the space allocation happens in extents and pages. A page is an 8kB block of contiguous space, an Extent are 8 logical consecutive pages,their are \textbf{uniform extents} (for 1 db object) and \textbf{mixed extents} (can share up to 8 db objects). A new table or index is allocated in a mixed extent. More than 8 pages in uniform extent is called an \textbf{extension}.
+		\section{Clustered and Unclustered indexes}
+			We use indexes to avoid table scans. The default storage of a table is a heap, which is an unordered collection of data-pages without clustered indexes. Other performance issues of the heap are \textbf{fragmentation} (= the table is scattered over several, non consecutive pages) and forward pointers (= if a variable length row becomes longer upon update, a forward pointer to another page is added).
+	
+			Indexes create an ordered structure imposed on records from a table. Trough these tree structures, we can access the data fast. It also helps to force unity of rows. The disadvantages are the overhead they create and they can slow down updates, deletes and inserts because indexes have to be updated as well.
+			\subsection{Clustered index}
+				the physical order of the rows in a table correspondents to the order in the clustered index, therefore each table can only have 1 clustered index. It imposes unique values and the primary key constraint. There are no forward pointers and the double linked list ensures order when reading sequential records.
+			\subsection{Non-clucstered index}
+				this is the default index, it is slower then a clustered one, but there is more then 1 per table allowed. There are forward and backward pointers between leaf nodes, each leaf contains key value and row locator. If a query needs more fields than present in the index, these fields must be fetched from data pages, the can be via \textbf{RID lookup} which is the bookmark lookups to the heap using RID's (row identifiers), or \textbf{key lookup}, which is the bookmark lookups to a clustered index, if present.
+		\section{SQL optimizer}
+			The \textbf{query optimizer }or query planner is the database component that transforms an SQL statement into an execution plan. This process is also called compiling or parsing, we distinguish 2 types: 
+			\begin{itemize}
+				\item \textbf{CBO (Cost Based Optimizer)} : generate many execution plan variations and calculate a cost value for each plan. This calculation is based on the operations in use and de estimated row numbers.
+				\item \textbf{RBO (Rule Based optimizer)} : generate the execution plan using a hardcoded rule set. they are less flexible and almost extinct
+			\end{itemize}
+			The plan is cached so it can be reused if necessary.
+
+			A cost based optimizer uses statistics about tables, columns and indexes. 
+			The column level stats are : 
+			\begin{itemize}
+				\item number of distinct values
+				\item smallest and largest values
+				\item number of null occurences
+				\item data distribution
+			\end{itemize}
+			the most important stat value for a table is its size (in rows and blocks)
+			the most important index stats are : 
+			\begin{itemize}
+				\item tree dept
+				\item the number of leaf nodes
+				\item number of distinct keys
+			\end{itemize}
+		\section{Covering index}
+			As you know, if a non clustered index doesn't completely cover a query, SQL server performs lookups for each row to fetch data. A \textbf{covering index} is a non-clustered index containing all columns necessary for a certain query. With SQL server, you can add extra columns to the index (although these columns aren't indexed).
+		\section{Concatenated Indexes}
+			Is it better to have 1 index with plural columns or plural indexes with 1 column? The rule in SQL server is that when querying only 2nd and 3th, ... field of index, it is not used. weird sentence huh, conclusion is to make your indexes according to the most commonly used queries (is it me or is this just common sense?).
+		\section{Working with indexes}
+			\subsubsection{creating indexes}
+			\begin{lstlisting}[language = sql]
+CREATE [UNIQUE] [| NONCLUSTERED] INDEX index_name ON table (kolom[,...n])\end{lstlisting}
+			\subsubsection{removing indexes}
+				\begin{lstlisting}[language = sql]
+DROP INDEX table_name.index [,...n]\end{lstlisting}
+		\section{when to use an index?}
+			\subsection{which columns should be indexed}
+				\begin{itemize}
+					\item primary and unique columns are indexes automatically
+					\item foreign keys often used in joins
+					\item columns often used in search conditions or in joins
+					\item columns often used in ORDER BY clause
+				\end{itemize}
+			\subsection{which columns should not be indexed}
+				\begin{itemize}
+					\item columns that are rarely used in queries
+					\item columns with a small number of possible values
+					\item columns with small tables
+					\item columns of type bit, text or image
+				\end{itemize}
+		\section{Rules of thumb}
+			\begin{enumerate}
+				\item avoid the use of functions
+				\item avoid calculations, isolate columns
+				\item prefer OUTER JOIN over UNION
+				\item avoid ANY and ALL
+				\item index for equality first, then for ranges
+				\item check the SQL code that is generated by your ORM tool
+				\item avoid dynamic SQL whenever possible 
+				\item use bind variables
+				\item execute joins in the database
+				\item avoid unnescessary joins
+			\end{enumerate}
+		\section{Indexed views (or materialized views)}
+			A view is a SELECT statement that is stored, the data is not stored. You can query a view like a table, so you could also create indexes on a view. a view with an unique clustered index is called a \textbf{indexed view} or \textbf{materialized view}. once a view is materialized, multiple non clustered indexes can be created. The benefits are that aggregations can be precomputed and stored in the indexed view to minimize expensive computations during query execution, tables can be prejoined and the resulting data set can be materialized, combinations of joins or aggreagations can be materialized. There are also some restrictions to keep in mind.
+			\begin{itemize}
+				\item the first index on the view must be a unique clustered index, nonclustered indexed on a indexed view can never me created first.
+				\item the view definition must be deterministic (pure), always same result for a given query
+				\item it must reference only base tables in the same database, no other views
+				\item it may contain float columns but they can't be included in the clustered index key
+				\item de indexed view must be schema bound to the tables referred to in the view to prevent modifications of the table schema.
+				\item restrictions on the view definition : 
+					\subitem no outer joins
+					\subitem no distinct
+					\subitem COUNT had to be replaced by COUNT\_BIG
+					\subitem no fields in COUNT\_BIG, only *
+			\end{itemize}
+		\section{Index statistics}
+			euh random
+		\section{Storage and partitions}
+			Each database consists of at least 2 files, a database file (.mdf) and log file (.ldf), there are datafiles that can be added optionally (.ndf)
+			i don't feel like this is super important
+
+	\chapter{In-memory databases}
+		\section{technology}
+			Classuc DBMS are designed in late 70's for delivering performance on hardware with slow disks, limited memory as main bottlenecks. The basic idea is that memory is much faster than disk. In-memory means that all the data is stored in the RAM memory, this makes for quick access from CPU to data. Disadvantage is that when the power is gone, so is all the data, it also is expensive.
+			\subsection{store by row}
+				The data is laid out in sequence, only small part of the data transferred to CPU is used, lots of padding, processor spins the wheels.
+			\subsection{columnar storage}
+				Each column is stored seperatly with its own seperata index. It allows to easily exlcude entire columns not included in the query. This makes for very dense data structures, it is also easy to compress. 
+		\section{Commerical in-memory databases}
+			examples (niet te kennen peisk)
+		\section{SQL Server memory optimized tables}
+			Microsoft claims a 30x performance gain, its not fast because it is in memory, but the data is in memory.
+	\chapter{Database API}
+		\section{Database system architecture}
+			\subsection{centralized system architecture}
+				All responsibilities are handled by 1 centralized entitiy, this architecture has gone almost extinct for it is expensive and dificult to maintain.
+			\subsection{tiered system architecture}
+				This architecture aimt to decouple the centralized setup by combining the computing capabilities of powerful central computers with the flexibility of PC's
+			\subsection{"fat" client variant}
+				The presentatino logic and application logic are handled by the client, it is common in cases where it makes sense to couple an application's workflow with its look and feel. the DBMS now fully runs on the database server.
+			\subsection{"thin" client variant}
+				Only the presentation logic is handled by the client, applications and databasecommands are executed on the server, this is common when application and databaselogic are tightly coupled or similar.
+		\section{Database APIs}
+			In a tiered DBMS system architecture, client applications are able to query database servers and receive the results. The clients that wish to utilize the services provided by a DBMS use a specific API provided by the DBMS. This database API exposes an interface trough which client applications can access and query a DBMS.
+			Most DBMS vendors provide a proprietary, DBMS specific API, which sucks for developers because we have to know which DBMS is used.
+			\subsection{Embedded vs Call-level APIs}
+				\subsubsection{Embedded APIs}
+					Embedded API embeds (for real kerel?) SQL statements in the host programming language, meaning that SQL statements are part of the source code. A pre-compiler can parform specific syntax checks, it cal also perform an early binding step which helps to generate an efficient query plan before the program is run. It does make it harder to maintain your code, and so they are not very popular.
+				\subsubsection{Call-level APIs}
+					These APIs pass the SQL instructions to the DBMS by means of direct calls to a series of procedures, functions or methods as provided by the API.
+			\subsection{Early binding vs Late Binding}
+				SQL binding refers to the translation of SQL code to a lower-level representation that can be executed by the DBMS, after performing tasks such as validation of table and field names, checking if the user or client has suffcient access rights, and generating a query plan. Early versus late binding refers to the actual moment when this binding step takes place. 
+				\subsubsection{Early binding}
+					Early binding is possible in case a pre compiler is used and can hence only be applied with an embedded API, it is beneficial in performance and the binding only needs to happen once.
+				\subsubsection{Late Binding}
+					The SQL statements are performed at runtime, which offers a lot of flexibility (it is also known as \textbf{dynamic SQL}). Syntax errors will remain hidden until the program is executed and testing becomes harder. It is also less efficient for queries that have to be executed multiple times.
+		\section{ODBC (Open DataBase Connectivity)}
+			ODBC is an open standard developed by Microsoft. It aims to offer applications a common, uniform interface to various DBMSs. It consists out of 4 main components : 
+			\begin{itemize}
+				\item \textbf{ODBC API} : universal interface trough which client applications will interact with a DBMS (call-level)
+				\item \textbf{ODBC Driver Manager} : responsible for selecting the correct Database Driver to communicate with a DBMS
+				\item \textbf{Database Driver} : collection of routines that contain the actual code to communicate with a DBMS
+				\item \textbf{Service Provider Interface (SPI)} : separate interface implemented by the DBMS vendor by which the Driver Manager interacts with various drivers.
+			\end{itemize}
+			ODBC allows applications to be easily ported between DBMSs, but it also comes with a few disadvantages : it is native to Microsoft based platforms, it is based on the C language (so what?) and the ODBC middleware introduces an extra layer of indirection (which has an influence on the performance)
+			\subsection{OLE DB and ADO}
+				OLE DB was a follow up spec to ODBC to allow uniform access to a variety of data sources using Microsoft Component Object Model (COM), it supports object databases, spreadsheets and other data source. OLE DB can be combined with ActiveX Data Objects (ADO), which provides a richer more 'programmer friendly' model on top of OLE DB
+			\subsection{ADO.NET}
+				OLE DB en ADO were merged into ADO.NET (based on de .NET framwork (you don't say?))
+		\section{JDBC}
+			Java DataBase Connectivity (JDBC) offers a call level database API, it is inspired by ODBC but developed to be used in Java. It is very portable and it allows for object-oriented programming.
+				
+				
 \end{document}
+		
