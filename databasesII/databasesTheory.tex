@@ -46,7 +46,7 @@
 {\let\clearpage\relax \chapter{SQL : Review}}
     
     \begin{theo}[SQL bestaat uit 3 sub languages]
-         \textrightarrow
+
         \begin{itemize}
             \item \textbf{Data Definition Language} (DDL) 
             \item \textbf{Data Manipulation language} (DML)
@@ -151,10 +151,10 @@
             \item Char and varchar contain non-unicode characters ($2^8$ = ASCII)
             \item Use char if column data has a consistent length (e.g. national identification number)
             \item varchar varying length
-            \item n \textrightarrow 1 - 8000
+            \item n -> 1 - 8000
             \item 
             \item nchar and nvarchar contain unicode characters (216 combinations)
-            \item n \textrightarrow 1 - 8000
+            \item n -> 1 - 8000
         \end{itemize}
         \item Binary data
         \begin{itemize}
@@ -427,7 +427,7 @@ Geen theorie
         \end{itemize}
     \end{itemize}
 
-    comparison of trigger functionality \ref{fig:comparisonTriggerFunc}
+    comparison of trigger functionality \ref{fig:comparisonTriggerFunc}\\
     \begin{figure}
         \includegraphics[width=350pt]{./images/comparison of trigger functionality.png}
         \caption{\label{fig:comparisonTriggerFunc}comparison of trigger functionality}
@@ -529,7 +529,7 @@ CREATE TYPE NameType FROM NVARCHAR(50) NOT NULL;
             \end{itemize}
         \item Disadvantages:
             \begin{itemize} 
-                \item No cached query execution plan \textrightarrow slower
+                \item No cached query execution plan -> slower
                 \item Debugging is more difficult (use PRINT!)
                 \item Not allowed in UDF's (= risk of side-effect)
                 \item SQL injection
@@ -539,7 +539,7 @@ CREATE TYPE NameType FROM NVARCHAR(50) NOT NULL;
         \begin{itemize} 
             \item Never trust front-end data. Check for valid input (e.g.: only A-Z and 0-9 are allowed)
             \item Don't allow symbols like ' ; ( ) \textendash
-            \item Pay attention if input data containing ``sp\_'' or ``xp\_'' \textrightarrow these system stored procedures can be destructive
+            \item Pay attention if input data containing ``sp\_'' or ``xp\_'' -> these system stored procedures can be destructive
         \end{itemize}
     
 {\let\clearpage\relax \chapter{Indexes and performance}}
@@ -554,11 +554,11 @@ CREATE TYPE NameType FROM NVARCHAR(50) NOT NULL;
     \begin{itemize} 
         \item Heap: unordered collection of data-pages without clustered index (see below) = default storage of a table
         \item Access via Index Alllocation Map (IAM)
-        \item Table scan: if a query fetches all pages of the table \textrightarrow always to avoid!
+        \item Table scan: if a query fetches all pages of the table -> always to avoid!
         \item Other performance issues with heap:
             \begin{itemize} 
                 \item Fragmentation: table is scattered over several, non-consecutive pages
-                \item Forward pointers: if a variable length row (e.g. varchar fields) becomes longer upon update, a forward pointer to another page is added. \textrightarrow table scan even slower
+                \item Forward pointers: if a variable length row (e.g. varchar fields) becomes longer upon update, a forward pointer to another page is added. -> table scan even slower
             \end{itemize}
     \end{itemize}
     \subsection{What is the difference? Indexes!}
@@ -587,7 +587,7 @@ CREATE TYPE NameType FROM NVARCHAR(50) NOT NULL;
             \item In SQL searching is used for fields in where, group by, having and order by clauses and for fields that are joined
             \begin{itemize} 
                 \item Fragmentation: table is scattered over several, non-consecutive pages
-                \item Forward pointers: if a variable length row (e.g. varchar fields) becomes longer upon update, a forward pointer to another page is added. \textrightarrow table scan even slower
+                \item Forward pointers: if a variable length row (e.g. varchar fields) becomes longer upon update, a forward pointer to another page is added. -> table scan even slower
             \end{itemize}
         \end{itemize}
     \subsection{Statistics}
@@ -934,7 +934,7 @@ CREATE TYPE NameType FROM NVARCHAR(50) NOT NULL;
             \item with 2PL protocol, locks can already be released before the transaction commits or aborts (shrink phase)
         \end{itemize}
     \item Cascading Rollback should be applied recursively
-    \item \textrightarrow best way to avoid this, is for all transactions to hold their locks until they have reached the ‘committed’ state (e.g., rigorous 2PL)
+    \item -> best way to avoid this, is for all transactions to hold their locks until they have reached the ‘committed’ state (e.g., rigorous 2PL)
     \end{itemize}
     \begin{figure}
         \includegraphics[width=240pt]{./images/2PL.png}
@@ -946,7 +946,7 @@ CREATE TYPE NameType FROM NVARCHAR(50) NOT NULL;
         \item Deadlock prevention can be achieved by static 2PL (transaction must acquire all its locks upon the start)
         \item Detection and resolution
         \begin{itemize}
-            \item wait for graph consisting of nodes representing active transactions and directed edges Ti  \textrightarrow Tj for each transaction Ti that is waiting to acquire a lock currently held by transaction Tj
+            \item wait for graph consisting of nodes representing active transactions and directed edges Ti  -> Tj for each transaction Ti that is waiting to acquire a lock currently held by transaction Tj
             \item deadlock exists if the wait for graph contains a cycle
             \item victim selection
         \end{itemize}
@@ -957,7 +957,7 @@ CREATE TYPE NameType FROM NVARCHAR(50) NOT NULL;
         \item Limited amount of interference may be acceptable for better throughput
         \item Long-term lock is granted and released according to a protocol, and is held for a longer time, until the transaction is committed
         \item A short-term lock is only held during the time interval needed to complete the associated operation
-        \item \textrightarrow use of short-term locks violates rule 3 of the 2PL protocol \& can be used to improve throughput!
+        \item -> use of short-term locks violates rule 3 of the 2PL protocol \& can be used to improve throughput!
         \item \textbf{Read uncommitted}
         \item \textbf{Read committed}
         \item \textbf{Repeatable read}
@@ -1069,7 +1069,7 @@ CREATE TYPE NameType FROM NVARCHAR(50) NOT NULL;
         \item DWH creates expectation of user ‘empowering’: Make own reports, analyses
         \item Complexity of integration
         \item Complex change and version management
-        \item \textrightarrow Night might be too short for ETL
+        \item -> Night might be too short for ETL
     \end{itemize}
     \subsection{Problems with Operational data}
     Dirty data, Missing values, Inconsistent data, Data not integrated, Wrong format, Too fine, Not fine enough, Too much data, Too many attributes, Too much volume
@@ -1085,7 +1085,7 @@ CREATE TYPE NameType FROM NVARCHAR(50) NOT NULL;
         \end{itemize}
         \item Kimball
         \begin{itemize}
-            \item Starts by identifying the information requirements (referred to as analytical themes) and associated business processes of the enterprise \textrightarrow Data Warehouse Bus Matrix; 
+            \item Starts by identifying the information requirements (referred to as analytical themes) and associated business processes of the enterprise -> Data Warehouse Bus Matrix; 
         \end{itemize}
     \end{itemize}
 
@@ -1105,7 +1105,7 @@ CREATE TYPE NameType FROM NVARCHAR(50) NOT NULL;
     \begin{itemize}
         \item Surrogate keys
         \begin{itemize}
-            \item StoreKey, ProductKey, ShipperKey \textrightarrow Meaningless integers
+            \item StoreKey, ProductKey, ShipperKey -> Meaningless integers
             \item Cannot use business keys since they usually have a business meaning
             \item Surrogate keys essentially buffer the data warehouse from the operational environment
             \item Business keys are usually bigger in size \& also often re-used over longer periods of time

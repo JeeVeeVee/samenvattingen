@@ -1,0 +1,158 @@
+\documentclass{report}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage[a4paper, total={6in, 10in}]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{tikz}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
+\graphicspath{ {images/} }
+\title{Database Programming\\ HoGent}
+\author{JeeVeeVee}
+\date{2021/2022}
+\begin{document}
+	\maketitle
+	\tableofcontents
+	\chapter{Big Data}
+		\section{information management}
+			In a business, we want to make decisions based on data, we can do so by using \textbf{Decision Support Systems}. The traditional systems pyramid shaped with raw data on the bottom and a data-based decision on top. In between them we can find dashboards, data mining and querying.
+			\\
+			\\
+			We can make a difference between two types of decisions: 
+			\begin{itemize}
+				\item \textbf{OLTP} : Online transaction systems, used for day to day operations
+				\item \textbf{OLAP} : Online analytical processing, used for longer-term decisions
+			\end{itemize}
+			Often, users want a single logic database for their analyses: it looks like all the dtta is heterogeneous, while this often is just an illusion.
+		\section{big data}
+			Big data is data that is not (consciously) entered by a user but that arise, often spontaneously, as a by-product of other processes and that are usually used for purposes for which they were not originally intended.
+			\subsection{the 4 V's of big data}
+				\begin{itemize}
+					\item \textbf{volume} : the amout of data, also referred to the data "at rest"
+					\item \textbf{variety} : the range of data types and sources that are used, data in its "many forms"
+					\item \textbf{velocity} : the speed at which data comes in and goes out, data "in motion", streaming data
+					\item	\textbf{veracity} : the uncertainty of data, data "in doubt"
+				\end{itemize}
+				Each of the V's brings a challenge.
+			\subsubsection{BIG data}
+				This comes with the volume of the data, it is important to wait long enough before you consider data BIG, traditional databases can easily store terabytes of data, they are still the preferred tech for most data related applications.
+			\subsubsection{varied data}
+				To store varied data, it is import to create a uniform database structure with fixed database scheme which requires expensive data transformations
+			\subsubsection{fast data}
+				With a lot of devices connected to the internet, bandwidth seems to almost be infinite, but it ain't.
+			\subsubsection{bad data}
+				this can be imprecise data, vague data, uncertain data, missing data
+			\subsection{Some other V's}
+				\begin{itemize}
+					\item \textbf{Virality} : how long do we need to 
+		qqsdfqsdfqdfqdsf			
+					keep data
+					\item \textbf{Viscosity} : is the data big enough so that it is statistically relevant?
+					\item \textbf{Visualisation} : can the results easily be presented.
+					\item \textbf{value} : data is the new gold
+				\end{itemize}µ
+			\subsection{bottleneck}
+				where do these V's fit in our theoretical shemes?
+	\chapter{Intro to NoSQL databases}
+		As we know, classic relational databases follow the ACID rules : 
+		\begin{itemize}
+			\item \textbf{Atomic} : a transactions is a logical unit of work, which must be either completed with all its data modifications or nothing at all
+			\item \textbf{Consistent} : at the end of the transaction, all data must be left in a consistent state
+			\item \textbf{Isolated} : modifications of data preformed by a transaction must be independent of another transaction
+			\item \textbf{Durable} : when a transaction is completed, effects of the modifications performed by the transaction must be permanent in the system.
+		\end{itemize}
+		The NoSQL movement grew out of a few frustrations with RDBMNSs, for example the focus on keeping data consistent, which may reduce flexibility and scalability. As the data volume of amount of parallel transactions grows, capacity can be increased in 2 ways : 
+		\begin{enumerate}
+			\item vertical scaling, which means you up the resources of your system, this is expensive and limited
+			\item horizontal scaling which means you increase the amount of servers in a cluster. this makes it a lot harder for relational databases, but it is cheaper and in theory infinite.
+		\end{enumerate}
+		NoSQL databases are databases that store and manipulate data, in other formats than tabular relations, they aim at near linear horizontal scalablity by distributing their data over a cluster of database nodes for the sake of performance as well as scalabilty. their view on consistency is that the data wil become consistent at some point after each transaction.
+		\\
+		\\
+		SQL is very old, which means it is very mature, that is why it is easier to switch between SQL databases then between NoSQL servers, each NoSQL has unique aspects.
+		\subsubsection{Impedence mismatch}
+			This occurs when cohesive structures of objects in memory, created by software can't be cast to the tables of a (relational) database.
+			NoSQL databases allow devs to develop without having to convert in-memory structs to relational structs. People used to think that relational databases were going extict because of this, however by then they had become an integration mechanism trough which people integrated different applications.
+			Nowadays, databases are encapsulated by services to avoid this.
+	\chapter{Types of NoSQL databases : key-value stores}
+		key-value based databases store data as (key, value) pairs. The keys are unique. Sometimes keys can be composed of multiple fields to yield a unique key.
+		The value can be almost anything, there is no scheme, no structure. This is also known as a hash map or dictionary.
+		These type of databases are very performant and scale easily.
+		\section{hash}
+			The keys of a database can be hashed, this means that you let a hash function transform fields into a value. This function has the uniform trait which means that no 2 values have the same output. It is also deterministic, which means that the same value always gets the same output. It is also recommended that your hash function returns a defined size, so that we know how much space the key takes to store. We can use a modulo function to then split the hashes over plural servers, this is called \textbf{sharding}.
+		\section{NoSQL clusters}
+			a cluster is a group of servers working together as a single logic server.
+			\subsection{request coordination}
+				in a lot of NoSQL all nodes of a cluster implement the same functionality, which implies there is no "master-node", because this would create a single point of failure. This also create the need for a membership protocol that ensures that all the nodes are aware or each other.
+			\subsection{consistent hashing}
+				these shemes are often used to avoid having to remap every key to a new node when new nodes are added or removed. When we use the modulo function to distribute the keys over the servers, we have to move a lot of keys when we add or remove a server. The solution for this issue is \textbf{consisten hashing}, at the core of the set-up is a so called "ring-topology", which represents a number range of [0,1]. Then all servers are hashed to place them in a position on this ring. We can now hash each key to a position on the ring and then place it on the first server that appears clockwise. The distribution will become more equal as there are more servers. This drastically reduces the amount of keys that have to be moved after a change of the cluster.
+			\subsection{replication and redundancy}
+				Problems with consistent hashing are, that when 2 servers are hashed close to each other, one of them won't have a lot of case, and when a new server is added, all the keys that are moved to the new server originate from the same server. We can solve this by mapping a server to not one but many points on the ring, which we call \textbf{replicas}.
+			\subsection{eventual consistency}
+				The membership protocol does not guarantee that every node is aware of every other node at all times. The state of the network might not be perfectly consistent at any moment in time, but it wil become consistent in the future. That is why a lot of NoSQL databases guarantee so called \textbf{eventual consistency}.
+				\\
+				\\
+				Most NoSQL databases follow the BASE principle : 
+				\begin{itemize}
+					\item Basically Available : see CAP
+					\item Soft state : the system can change without receiving new input
+					\item Eventual consistency : the system wil become consistent over time
+				\end{itemize}
+				The CAP-theorem states that distributed computer systems cannot guarantee the following 3 properties at the same time : 
+				\begin{itemize}
+					\item \textbf{Consistency} : all nodes see the same data at the same time
+					\item \textbf{Availability} : all requests receive a response indication a success or failure response 
+					\item \textbf{Partition} tolerance : the system continues to work even if nodes go down or are added.
+				\end{itemize}
+			\subsection{stabilization}
+				The operation which repartitions hashes over nodes is called \textbf{stabilization}, by using a consistent hashing scheme, the number of fluctuations in hash-node mapping will be minimized.
+			\subsection{integrity constraints and querying}
+				key-value stores represent a very diverse gamut of systems, that is why only limited query facilities are offered. There are no defined relationships, the database knows nothing about the value, but they always use primary-key acces which makes for great performance. 
+	\chapter{Types of NoSQL databases : tuples and document stores}
+		\section{tuple store}
+			a tuple store is similar to a key-value store, but it does not store pairwise combinations of a key and a value, but instead stores a unique key together with a vector of data. They also permit organizing entries in semantical groups (collections or tables)
+		\section{document store}
+			document stores store a collection of attributes that are labeled and unordered, representing items that are semi-structured.
+			Most modern NoSQL databases choose to represent documents using JSON, which allows for strings, booleans, arrays, objects and nulls.
+			\subsection{Items with keys}
+				most NoSQL documents stores will allow you to store items in "tables" in a schemaless manner, they will enforce that a primary key be specified.
+			\subsection{Filters and queries}
+				these stores deal with semi-structured items, there is no particular scheme but they assume that items have an implicit structure following their representational format. Just as with key-value stores, the primary key from each item can be used to rapidly retrieve an item. But since these items are composed out of multiple attributes, we are also able to define filters. That is why they are the most adopted type of NoSQL database
+			\subsection{MongoDB}
+				MongoDB is one of te most well-known and most used implementations of a document store. It is strongly consistent by default, that is because it is a so-called "single-master" system (it has a master node).
+			\subsection{SQL After All}
+				Filtering and querying are quite a challenge in MongoDB, we can even use aggregate functions and GROUP-BY statements. This is the reason why many document store express queries using a SQL interface. £Many RDBMS vendors start implementing NoSQL by focussing on horizontal scalability, dropping schema requirements, support for nested data-types or allowing to store JSON in tables.
+	\chapter{Types of NoSQL databases : column-orietented databases}
+		A column oriented DBMS stores data tables as sections of columns of data, this is usefull if aggregates are regularly computed over large numbers of similar data items and if the data is \textbf{sparse} (a lot of null values). this can be combined with key-value or document store.
+		These databases exist because row-based databases are not efficient at preforming operations that apply to the entire data set, they need indexes which add overhead. Retrieving all attributes pertaining to a single entity becomes less efficient and join operations will be slowed down.
+	\chapter{Types of NoSQL databases : graph databases}
+		
+		
+\end{document}
